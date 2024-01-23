@@ -43,4 +43,23 @@ $ yarn install
 
 Aside from ```CMakeJS.cmake```, all other files here are presented solely as a 'hello world' demo of a 'typical' Node Addon project which uses the proposed ```CMakeJS.cmake``` API, from the perspective of an end-user.
 
+As a bonus: it is possible to add this demo project to another NodeJS project, and watch it build itself automatically, showing the process is working fully. To do so, make a new NodeJS project, and add this repo's URL to the dependencies:
+
+```.json
+"dependencies": {
+  "@nathanjhood/napi-addon": "https://github.com/nathanjhood/NapiAddon.git"
+}
+```
+
+Then, try running the initial ```npm/yarn run install``` command as usual. The demo addon will be under ```node_modules/@nathanjhood/napi-addon/build/lib/addon.node``` ready for consuming.
+
+The demo addon is then acquirable in your demo NodeJS project as you would expect:
+
+```.js
+const napi_addon = require("@nathanjhood/napi-addon")
+
+console.log(addon.hello());
+console.log(`Napi Version: ${addon.version()}`);
+```
+
 Thanks for reading!

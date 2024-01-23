@@ -8,7 +8,9 @@ project (demo)
 # include 'CMakeJS.cmake'
 include(CMakeJS)
 
-# can name the addon anything...
+# can name the target anything... best practice:
+# make sure namespaces, directory/file pathnames,
+# and names of targets are matching.
 cmakejs_create_napi_addon(addon
   # SOURCES
   src/demo/addon.cpp
