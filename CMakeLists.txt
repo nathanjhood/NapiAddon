@@ -3,10 +3,11 @@ cmake_minimum_required(VERSION 3.28)
 # Add the path to 'CMakeJS.cmake' to the module path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
-project (demo)
-
-# include 'CMakeJS.cmake'
+# include 'CMakeJS.cmake'. This can go before *or* after 'project()', since
+# we are not depending on the PROJECT_* vars to be defined :)
 include(CMakeJS)
+
+project (demo)
 
 # can name the target anything... best practice:
 # make sure namespaces, directory/file pathnames,
