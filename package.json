@@ -1,9 +1,10 @@
 {
-  "name": "NapiAddon",
+  "name": "@nathanjhood/napi-addon",
   "version": "1.0.0",
-  "main": "index.js",
-  "author": "StoneyDSP <nathanjhood@googlemail.com>",
+  "author": "nathanjhood <nathanjhood@googlemail.com>",
   "license": "MIT",
+  "main": "index.js",
+  "types": "./lib/addon",
   "dependencies": {
     "cmake-js": "^7.3.0",
     "node-addon-api": "^7.1.0",
