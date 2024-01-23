@@ -39,6 +39,8 @@ $ npm run install
 $ yarn install
 ```
 
-Aside from ```CMakeJS.cmake```, all other files are presented solely as a 'hello world' demo of a Node Addon project which uses the proposed CMake API, from the perspective of an end-user.
+```CMakeJS.cmake``` as presented is rough/unrefined, but already presents a working UX proposal.
+
+Aside from ```CMakeJS.cmake```, all other files here are presented solely as a 'hello world' demo of a 'typical' Node Addon project which uses the proposed ```CMakeJS.cmake``` API, from the perspective of an end-user.
 
 Thanks for reading!
