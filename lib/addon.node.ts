@@ -8,10 +8,10 @@ interface addon {
    */
   hello(): string;
   /**
-   * Returns a string, confirming the module version number.
-   * @returns string
+   * Returns a number, confirming the Napi Addon API version number.
+   * @returns number
    */
-  version(): string;
+  version(): number;
 }
 const addon: addon = require('../build/lib/addon.node');
 export = addon;
