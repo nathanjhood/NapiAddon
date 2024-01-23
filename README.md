@@ -2,11 +2,11 @@
 
 [some ideas for cmake-js v8](https://github.com/cmake-js/cmake-js/issues/310)
 
-The file of interest here is the one named ```NapiAddon.cmake``` - this file is a rough CMake module that builders can include in their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target, with all the reasonable defaults taken care of - but, intermediate/advanced users still have scope to override any defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target.
+The file of interest here is the one named ```CMakeJS.cmake``` - this file is a rough CMake module that builders can include in their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target, with all the reasonable defaults taken care of - but, intermediate/advanced users still have scope to override any defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target(s).
 
 It also does not clash with any pre-existing projects, by not imposing itself on users unless they specifically call the function within their build script. Adoption of this proposed API would be entirely optional, and especially helpful for newcomers.
 
-By exporting an interface library under cmake-js' own namespace, the ```NapiAddon.cmake``` file can easily be shipped in the cmake-js package, and automatically included by the cmake-js CLI, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
+By exporting an interface library under cmake-js' own namespace, the ```CMakeJS.cmake``` file can easily be shipped in the cmake-js package tree, and automatically included by the cmake-js CLI, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
 
 Builders are able to get Addons to compile and run using a very minimal CMake build script:
 
@@ -15,13 +15,14 @@ Builders are able to get Addons to compile and run using a very minimal CMake bu
 
 cmake_minimum_required(VERSION 3.28)
 
+# /path/to/CMakeJS.cmake
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 project (demo)
 
-include(NapiAddon)
+include(CMakeJS)
 
-add_napi_addon(addon
+cmakejs_create_napi_addon(addon
   # SOURCES
   src/demo/addon.cpp
 )
@@ -38,6 +39,6 @@ $ npm run install
 $ yarn install
 ```
 
-Aside from ```NapiAddon.cmake```, all other files are presented solely as a demo Node Addon project which uses the proposed CMake API.
+Aside from ```CMakeJS.cmake```, all other files are presented solely as a 'hello world' demo of a Node Addon project which uses the proposed CMake API, from the perspective of an end-user.
 
 Thanks for reading!
