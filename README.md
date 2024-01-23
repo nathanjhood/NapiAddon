@@ -56,10 +56,10 @@ Then, try running the initial ```npm/yarn run install``` command as usual. The d
 The demo addon is then acquirable in your demo NodeJS project as you would expect:
 
 ```.js
-const napi_addon = require("@nathanjhood/napi-addon")
+const nathan_napi_addon = require("@nathanjhood/napi-addon")
 
-console.log(addon.hello());
-console.log(`Napi Version: ${addon.version()}`);
+console.log(nathan_napi_addon.hello());
+console.log(`Napi Version: ${nathan_napi_addon.version()}`);
 ```
 
 Thanks for reading!
