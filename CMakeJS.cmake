@@ -1,5 +1,7 @@
 
-# Include Node-API headers
+#[==[
+  Include Node-API headers
+]==]
 execute_process(
   COMMAND node -p "require('node-api-headers').include_dir"
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -13,7 +15,9 @@ set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}"
   FORCE
 )
 
-# Include Node-API wrappers
+#[==[
+  Include Node Addon wrappers
+]==]
 execute_process(
   COMMAND node -p "require('node-addon-api').include"
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -27,13 +31,15 @@ set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}"
   FORCE
 )
 
-# Create a Node C++ Addon as a dynamic library
-add_library (napi-addon-base INTERFACE)
-add_library (napi-addon::base ALIAS napi-addon-base)
-target_include_directories (napi-addon-base INTERFACE ${CMAKE_JS_INC} ${NODE_API_HEADERS_DIR} ${NODE_ADDON_API_DIR})
-target_sources (napi-addon-base INTERFACE ${CMAKE_JS_SRC})
-target_link_libraries (napi-addon-base ${CMAKE_JS_LIB})
-set_target_properties (napi-addon-base
+#[==[
+  Create an interface library (no output) with all Addon API dependencies for linkage
+]==]
+add_library (cmake-js-base INTERFACE)
+add_library (cmake-js::base ALIAS cmake-js-base)
+target_include_directories (cmake-js-base INTERFACE ${CMAKE_JS_INC} ${NODE_API_HEADERS_DIR} ${NODE_ADDON_API_DIR})
+target_sources (cmake-js-base INTERFACE ${CMAKE_JS_SRC})
+target_link_libraries (cmake-js-base ${CMAKE_JS_LIB})
+set_target_properties (cmake-js-base
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -43,7 +49,7 @@ if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
   execute_process (COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
 endif ()
 
-function(_napi_addon_normalize_path var)
+function(_cmakejs_normalize_path var)
   set(path "${${var}}")
   file(TO_CMAKE_PATH "${path}" path)
   while(path MATCHES "//")
@@ -53,7 +59,10 @@ function(_napi_addon_normalize_path var)
   set("${var}" "${path}" PARENT_SCOPE)
 endfunction()
 
-function(add_napi_addon name)
+#[==[
+  Export a helper function for creating a dynamic ```*.node``` library, linked to the Addon API interface
+]==]
+function(cmakejs_create_napi_addon name)
 
   set(args ALIAS NAMESPACE)
   cmake_parse_arguments(ARG "" "${args}" "" "${ARGN}")
@@ -86,7 +95,7 @@ function(add_napi_addon name)
   elseif(ARG_NAMESPACE)
     add_library(${ARG_NAMESPACE}::${name} ALIAS ${name})
   else()
-    add_library(napi-addon::${name} ALIAS ${name})
+    add_library(cmake-js::${name} ALIAS ${name})
   endif()
 
   target_compile_definitions(${name} PRIVATE "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}")
@@ -97,7 +106,7 @@ function(add_napi_addon name)
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   )
 
-  target_link_libraries(${name} napi-addon::base)
+  target_link_libraries(${name} cmake-js::base)
 
   set_property(TARGET ${name} PROPERTY ${name}_IS_NAPI_ADDON_LIBRARY TRUE)
   set_target_properties (${name}
@@ -110,15 +119,18 @@ function(add_napi_addon name)
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
   )
 
-  napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
+  cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
 
 endfunction()
 
-function(napi_addon_add_sources name)
+#[==[
+  Can extend the CMake interface with other useful functions...
+]==]
+function(cmakejs_napi_addon_add_sources name)
 
   get_target_property(is_addon_lib ${name} ${name}_IS_NAPI_ADDON_LIBRARY)
   if(NOT TARGET ${name} OR NOT is_addon_lib)
-    message(SEND_ERROR "napi_addon_add_sources called on target '${name}' which is not an existing napi addon library")
+    message(SEND_ERROR "'cmakejs_napi_addon_add_sources()' called on target '${name}' which is not an existing napi addon library")
     return()
   endif()
 
@@ -130,14 +142,14 @@ function(napi_addon_add_sources name)
   if(NOT ARG_BASE_DIRS)
     set(ARG_BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
-  _napi_addon_normalize_path(ARG_BASE_DIRS)
+  _cmakejs_normalize_path(ARG_BASE_DIRS)
   get_filename_component(ARG_BASE_DIRS "${ARG_BASE_DIRS}" ABSOLUTE)
 
   # Generate the identifier for the resource library's namespace
   get_target_property(lib_namespace "${name}" ${name}_ADDON_NAMESPACE)
 
   foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-    _napi_addon_normalize_path(input)
+    _cmakejs_normalize_path(input)
     get_filename_component(abs_in "${input}" ABSOLUTE)
 
     file(RELATIVE_PATH relpath "${ARG_BASE_DIRS}" "${abs_in}")
@@ -153,7 +165,7 @@ function(napi_addon_add_sources name)
 
 endfunction()
 
-function(napi_addon_include_directories name)
+function(cmakejs_napi_addon_include_directories name)
   # target_include_directories(${name}
   #   PUBLIC
   #   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}>
