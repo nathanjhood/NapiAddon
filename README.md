@@ -2,7 +2,7 @@
 
 [some ideas for cmake-js v8](https://github.com/cmake-js/cmake-js/issues/310)
 
-The file of interest here is the one named ```CMakeJS.cmake``` - this file is a rough CMake module that builders can include in their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target, with all the reasonable defaults taken care of - but, intermediate/advanced users still have scope to override any defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target(s).
+The file of interest here is the one named [```CMakeJS.cmake```](https://github.com/nathanjhood/NapiAddon/blob/main/CMakeJS.cmake) - this file is a rough CMake module that builders can include in their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target, with all the reasonable defaults taken care of - but, intermediate/advanced users still have scope to override any defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target(s).
 
 It also does not clash with any pre-existing projects, by not imposing itself on users unless they specifically call the function within their build script. Adoption of this proposed API would be entirely optional, and especially helpful for newcomers.
 
