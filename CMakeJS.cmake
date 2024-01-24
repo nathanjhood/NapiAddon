@@ -19,20 +19,47 @@ set(_CMAKEJS_VERSION "${_version}" CACHE INTERNAL "CMakeJS version. Used for che
 
 set(_CMAKEJS_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to 'CMakeJS.cmake' script")
 
+if(NOT DEFINED CMAKEJS_BINARY_DIR)
+  set(CMAKEJS_BINARY_DIR "${CMAKE_BINARY_DIR}")
+endif()
+
+#[=============================================================================[
+Provides ```NODE_EXECUTABLE``` for executing NodeJS commands in CMake scripts.
+]=============================================================================]#
+function(cmakejs_acquire_node_executable)
+  find_program(NODE_EXECUTABLE
+    NAMES "node" "node.exe"
+    PATHS "$ENV{PATH}" "$ENV{ProgramFiles}/nodejs"
+    DOC "NodeJs executable binary"
+    REQUIRED
+  )
+
+  if(VERBOSE)
+    message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
+  endif()
+
+endfunction()
+
+if(NOT DEFINED NODE_EXECUTABLE)
+  cmakejs_acquire_node_executable()
+  message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
+endif()
+
 #[=============================================================================[
 Provides ```NODE_API_HEADERS_DIR``` for NodeJS C Addon development files.
 ]=============================================================================]#
 function(cmakejs_acquire_napi_c_files)
   execute_process(
-    COMMAND node -p "require('node-api-headers').include_dir"
+    COMMAND "${NODE_EXECUTABLE}" -p "require('node-api-headers').include_dir"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE NODE_API_HEADERS_DIR
+    COMMAND_ERROR_IS_FATAL
   )
   string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR ${NODE_API_HEADERS_DIR})
   set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
 
   if(VERBOSE)
-    message(STATUS "Configuring Napi Addon: ${name}")
+    message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
   endif()
 
 endfunction()
@@ -48,9 +75,10 @@ Provides ```NODE_ADDON_API_DIR``` for NodeJS C++ Addon development files.
 function(cmakejs_acquire_napi_cpp_files)
 
   execute_process(
-    COMMAND node -p "require('node-addon-api').include"
+    COMMAND "${NODE_EXECUTABLE}" -p "require('node-addon-api').include"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE NODE_ADDON_API_DIR
+    COMMAND_ERROR_IS_FATAL
   )
   string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
   set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
@@ -169,13 +197,13 @@ function(cmakejs_create_napi_addon name)
     PREFIX ""
     SUFFIX ".node"
 
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/bin"
 
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/Debug"
-    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/Debug"
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin/Debug"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/bin/Debug"
   )
 
   cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
