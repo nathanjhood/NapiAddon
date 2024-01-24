@@ -58,6 +58,9 @@ function(cmakejs_acquire_napi_c_files)
   string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR ${NODE_API_HEADERS_DIR})
   set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
 
+  file(GLOB NODE_API_INC_FILES "${NODE_API_HEADERS_DIR}/*.h")
+  source_group("Node Addon API (C)" FILES ${NODE_API_INC_FILES})
+
   if(VERBOSE)
     message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
   endif()
@@ -82,6 +85,9 @@ function(cmakejs_acquire_napi_cpp_files)
   )
   string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
   set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
+
+  file(GLOB NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_DIR}/*.h")
+  source_group("Node Addon API (C++)" FILES ${NODE_ADDON_API_INC_FILES})
 
   if(VERBOSE)
     message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
