@@ -138,7 +138,9 @@ if (NOT DEFINED CMAKE_JS_INC)
 
   # ...and if we're calling from CMake directly, we need to set up some vars
   # that our build step depends on (these are predefined when calling via npm/cmake-js).
-  message(STATUS "CMake Calling...")
+  if(VERBOSE)
+    message(STATUS "CMake Calling...")
+  endif()
 
   # Check for cmake-js installations
   find_program(CMAKE_JS_EXECUTABLE
@@ -197,13 +199,6 @@ if (NOT DEFINED CMAKE_JS_INC)
   set(CMAKE_JS_SRC ${CMAKE_JS_SRC} CACHE STRING "cmake-js source file." FORCE)
   set(CMAKE_JS_LIB ${CMAKE_JS_LIB} CACHE STRING "cmake-js lib file." FORCE)
 
-  # Log the vars to the console for sanity...
-  if(VERBOSE)
-    message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
-    message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
-    message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
-  endif()
-
   # At this point, some warnings may occur re: the below (still investigating);
   # Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
   #set (NAPI_CPP_EXCEPTIONS TRUE CACHE STRING "Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS")
@@ -212,16 +207,18 @@ if (NOT DEFINED CMAKE_JS_INC)
 else ()
 
   # ... we already are calling via npm/cmake-js, so we should already have all the vars we need!
-  message(STATUS "CMakeJS Calling...")
-
-  # Notwithstanding a quick sanity check, of course.
   if(VERBOSE)
-    message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
-    message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
-    message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
+    message(DEBUG "CMakeJS Calling...")
   endif()
 
 endif ()
+
+# Log the vars to the console for sanity...
+if(VERBOSE)
+  message(DEBUG "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+  message(DEBUG "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
+  message(DEBUG "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
+endif()
 
 #[=============================================================================[
   Create an interface library (no output) with all Addon API dependencies for
