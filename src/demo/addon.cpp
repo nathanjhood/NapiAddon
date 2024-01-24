@@ -1,4 +1,7 @@
-// @file src/demo/addon.cpp
+/**
+ * @file addon.cpp
+ * @brief A quick 'hello world' Napi Addon in C++
+*/
 
 // Required header and C++ flag
 #if __has_include(<napi.h>) && BUILDING_NODE_EXTENSION
@@ -9,7 +12,7 @@ namespace NAPI_CPP_CUSTOM_NAMESPACE
 {
 
 Napi::Value Hello(const Napi::CallbackInfo& info) {
-  return Napi::String::New(info.Env(), "addon is online!");
+  return Napi::String::New(info.Env(),  "addon is online!");
 }
 
 Napi::Value Version(const Napi::CallbackInfo& info) {
@@ -35,7 +38,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 }
 
 // Register a new addon with the intializer function defined above
-NODE_API_MODULE(addon, Init) // (name to use, initializer to use)
+NODE_API_MODULE(CMAKEJS_ADDON_NAME, Init) // (name to use, initializer to use)
 
 } // namespace NAPI_CPP_CUSTOM_NAMESPACE
 

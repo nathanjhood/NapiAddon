@@ -76,17 +76,20 @@ function(cmakejs_create_napi_addon name)
     set(ARG_NAPI_VERSION ${NAPI_VERSION})
   endif()
 
-  add_library(${name} SHARED)
   if(ARG_ALIAS)
-    add_library("${ARG_ALIAS}" ALIAS ${name})
+    set(alt_name "${ARG_ALIAS}")
   elseif(ARG_NAMESPACE)
-    add_library(${ARG_NAMESPACE}::${name} ALIAS ${name})
+    set(alt_name "${ARG_NAMESPACE}::${name}")
   else()
-    add_library(cmake-js::${name} ALIAS ${name})
+    set(alt_name "${name}::${name}")
   endif()
+
+  add_library(${name} SHARED)
+  add_library("${alt_name}" ALIAS ${name})
 
   target_compile_definitions(${name}
     PRIVATE
+    "CMAKEJS_ADDON_NAME=${name}"
     "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
     "NAPI_VERSION=${ARG_NAPI_VERSION}"
   )
