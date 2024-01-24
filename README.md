@@ -61,11 +61,11 @@ or
 $ yarn install
 ```
 
-*However*, the ```CMakeJS.cmake``` script does *not depend on being executed by cmake-js*, and should be building independently using just CMake commands.
+*However*, the ```CMakeJS.cmake``` script does *not depend on being executed by cmake-js*, and will build independently using just CMake commands.
 
-Because of the above, IDE integration should be assured.
+Because of the above, IDE tooling integration should be assured.
 
-```CMakeJS.cmake``` as presented is rough/unrefined, but already presents a working UX proposal.
+```CMakeJS.cmake``` as presented is rough/unrefined and missing several features it would be worth looking closer at, but already presents a working UX proposal.
 
 Aside from ```CMakeJS.cmake```, all other files here are presented solely as a 'hello world' demo of a 'typical' Node Addon project which uses the proposed ```CMakeJS.cmake``` API, from the perspective of an end-user.
 
