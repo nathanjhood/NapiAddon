@@ -1,5 +1,5 @@
 #[=============================================================================[
-  Check whether we have already been included
+  Check whether we have already been included (borrowed from CMakeRC)
 ]=============================================================================]#
 # Hypothetical version number...
 set(_version 8.0.0)
@@ -68,7 +68,7 @@ endif()
 
 #[=============================================================================[
   Create an interface library (no output) with all Addon API dependencies for
-  linkage
+  linkage.
 ]=============================================================================]#
 add_library (cmake-js-base INTERFACE)
 add_library (cmake-js::base ALIAS cmake-js-base)
@@ -79,6 +79,9 @@ if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
   execute_process (COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
 endif ()
 
+#[=============================================================================[
+Internal helper (borrowed from CMakeRC).
+]=============================================================================]#
 function(_cmakejs_normalize_path var)
   set(path "${${var}}")
   file(TO_CMAKE_PATH "${path}" path)
@@ -180,7 +183,7 @@ function(cmakejs_create_napi_addon name)
 endfunction()
 
 #[=============================================================================[
-  Can extend the CMake interface with other useful functions...
+Add source files to an existing Napi Addon target.
 ]=============================================================================]#
 function(cmakejs_napi_addon_add_sources name)
 
