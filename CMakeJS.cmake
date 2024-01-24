@@ -24,6 +24,19 @@ if(NOT DEFINED CMAKEJS_BINARY_DIR)
 endif()
 
 #[=============================================================================[
+Internal helper (borrowed from CMakeRC).
+]=============================================================================]#
+function(_cmakejs_normalize_path var)
+  set(path "${${var}}")
+  file(TO_CMAKE_PATH "${path}" path)
+  while(path MATCHES "//")
+      string(REPLACE "//" "/" path "${path}")
+  endwhile()
+  string(REGEX REPLACE "/+$" "" path "${path}")
+  set("${var}" "${path}" PARENT_SCOPE)
+endfunction()
+
+#[=============================================================================[
 Provides ```NODE_EXECUTABLE``` for executing NodeJS commands in CMake scripts.
 ]=============================================================================]#
 function(cmakejs_acquire_node_executable)
@@ -100,6 +113,119 @@ if(NOT DEFINED NODE_ADDON_API_DIR)
   message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
 endif()
 
+#[=======================================================================[
+FindCMakeJs.cmake
+--------
+
+Find the native CMakeJs includes, source, and library
+
+This module defines
+
+::
+
+  CMAKE_JS_INC, where to find node.h, etc.
+  CMAKE_JS_LIB, the libraries required to use CMakeJs.
+  CMAKE_JS_SRC, where to find required *.cpp files, if any
+  CMAKE_JS_FOUND, If false, do not try to use CMakeJs.
+
+#]=======================================================================]
+
+# CMAKE_JS_INC is defined on all platforms when calling from cmake-js.
+# By checking whether this var is pre-defined, we can determine if we are
+# running from an npm script (via cmake-js), or from CMake directly...
+function(cmakejs_acquire_cmakejs)
+if (NOT DEFINED CMAKE_JS_EXECUTABLE)
+
+  # ...and if we're calling from CMake directly, we need to set up some vars
+  # that our build step depends on (these are predefined when calling via npm/cmake-js).
+  message(STATUS "CMake Calling...")
+
+  # Check for cmake-js installations
+  find_program(CMAKE_JS_EXECUTABLE
+    NAMES "cmake-js" "cmake-js.exe"
+    PATHS "$ENV{PATH}" "$ENV{ProgramFiles}/cmake-js"
+    DOC "cmake-js system executable binary"
+    REQUIRED
+  )
+  if (NOT CMAKE_JS_EXECUTABLE)
+      message(FATAL_ERROR "cmake-js system installation not found! Please run 'npm -g install cmake-js@latest' and try again.")
+  endif()
+
+  _cmakejs_normalize_path(CMAKE_JS_EXECUTABLE)
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_EXECUTABLE ${CMAKE_JS_EXECUTABLE})
+
+  find_program(CMAKE_JS_NPM_PACKAGE
+    NAMES "cmake-js" "cmake-js.exe"
+    PATHS "${PROJECT_SOURCE_DIR}/node_modules/cmake-js/bin"
+    DOC "cmake-js project-local npm package binary"
+    REQUIRED
+  )
+  if (NOT CMAKE_JS_NPM_PACKAGE)
+      message(FATAL_ERROR "cmake-js project-local npm package not found! Please run 'npm install' and try again.")
+  endif()
+
+  # Execute the CLI commands, and write their outputs into the cached vars
+  # where the remaining build processes expect them to be...
+  execute_process(
+    COMMAND ${CMAKE_JS_EXECUTABLE} "print-cmakejs-include" "--log-level error"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE CMAKE_JS_INC
+  )
+
+  execute_process(
+    COMMAND ${CMAKE_JS_EXECUTABLE} "print-cmakejs-src" "--log-level error"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE CMAKE_JS_SRC
+  )
+
+  execute_process(
+    COMMAND ${CMAKE_JS_EXECUTABLE} "print-cmakejs-lib" "--log-level error"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE CMAKE_JS_LIB
+  )
+
+  # Strip the vars of any unusual chars that might break the paths...
+  _cmakejs_normalize_path(CMAKE_JS_INC)
+  _cmakejs_normalize_path(CMAKE_JS_SRC)
+  _cmakejs_normalize_path(CMAKE_JS_LIB)
+
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
+
+  set(CMAKE_JS_INC ${CMAKE_JS_INC} CACHE STRING "cmake-js include directory." FORCE)
+  set(CMAKE_JS_SRC ${CMAKE_JS_SRC} CACHE STRING "cmake-js source file." FORCE)
+  set(CMAKE_JS_LIB ${CMAKE_JS_LIB} CACHE STRING "cmake-js lib file." FORCE)
+
+  # Log the vars to the console for sanity...
+  # if(VERBOSE)
+    message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+    message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
+    message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
+  # endif()
+
+  # At this point, some warnings may occur re: the below (still investigating);
+  # Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
+  #set (NAPI_CPP_EXCEPTIONS TRUE CACHE STRING "Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS")
+  add_definitions(-DNAPI_CPP_EXCEPTIONS) # Also needs /EHsc
+  # add_definitions(-DNAPI_DISABLE_CPP_EXCEPTIONS)
+else ()
+
+  # ... we already are calling via npm/cmake-js, so we should already have all the vars we need!
+  message(STATUS "CMakeJS Calling...")
+
+  # Notwithstanding a quick sanity check, of course.
+  # if(VERBOSE)
+    message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+    message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
+    message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
+  # endif()
+
+endif ()
+endfunction()
+
+
+
 #[=============================================================================[
   Create an interface library (no output) with all Addon API dependencies for
   linkage.
@@ -112,19 +238,6 @@ target_link_libraries (cmake-js-base ${CMAKE_JS_LIB})
 if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
   execute_process (COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
 endif ()
-
-#[=============================================================================[
-Internal helper (borrowed from CMakeRC).
-]=============================================================================]#
-function(_cmakejs_normalize_path var)
-  set(path "${${var}}")
-  file(TO_CMAKE_PATH "${path}" path)
-  while(path MATCHES "//")
-      string(REPLACE "//" "/" path "${path}")
-  endwhile()
-  string(REGEX REPLACE "/+$" "" path "${path}")
-  set("${var}" "${path}" PARENT_SCOPE)
-endfunction()
 
 #[=============================================================================[
   Export a helper function for creating a dynamic ```*.node``` library, linked
@@ -182,6 +295,7 @@ function(cmakejs_create_napi_addon name)
     "CMAKEJS_ADDON_NAME=${name}"
     "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
     "NAPI_VERSION=${ARG_NAPI_VERSION}"
+    "BUILDING_NODE_EXTENSION"
   )
 
   target_include_directories(${name}
@@ -199,7 +313,7 @@ function(cmakejs_create_napi_addon name)
     PROPERTIES
 
     LIBRARY_OUTPUT_NAME "${name}"
-    LIBRARY_OUTPUT_NAME_DEBUG "d${name}"
+    # LIBRARY_OUTPUT_NAME_DEBUG "d${name}"
     PREFIX ""
     SUFFIX ".node"
 
@@ -207,9 +321,9 @@ function(cmakejs_create_napi_addon name)
     LIBRARY_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/bin"
 
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
-    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/bin/Debug"
+    # ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
+    # LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
+    # RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/bin/Debug"
   )
 
   cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
