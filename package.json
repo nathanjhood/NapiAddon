@@ -15,19 +15,20 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "preinstall": "cmake-js install",
-    "postinstall": "cmake-js compile",
-    "configure": "cmake-js configure",
-    "reconfigure": "cmake-js reconfigure",
-    "build": "cmake-js build",
-    "rebuild": "cmake-js rebuild",
-    "clean": "cmake-js clean",
-    "wipe": "cmake-js clean && rm -rvf ./node_modules",
-    "start": "node ./test/index.js",
+    "start":              "node ./test/index.js",
 
-    "cmake:configure": "cmake -S . -B ./build",
-    "cmake:reconfigure": "cmake --fresh -S . -B ./build",
-    "cmake:build": "cmake --build ./build",
-    "cmake:rebuild": "cmake --fresh -S . -B ./build && cmake --build ./build"
+    "preinstall":         "cmake-js install",
+    "postinstall":        "cmake-js compile",
+    "configure":          "cmake-js configure",
+    "reconfigure":        "cmake-js reconfigure",
+    "build":              "cmake-js build",
+    "rebuild":            "cmake-js rebuild",
+    "clean":              "cmake-js clean",
+    "wipe":               "cmake-js clean && rm -rvf ./node_modules",
+
+    "cmake:configure":    "cmake -S . -B ./build",
+    "cmake:reconfigure":  "cmake --fresh -S . -B ./build",
+    "cmake:build":        "cmake --build ./build",
+    "cmake:rebuild":      "cmake --fresh -S . -B ./build && cmake --build ./build"
   }
 }
