@@ -229,8 +229,8 @@ if(NOT DEFINED NODE_ADDON_API_DIR)
 endif()
 
 #[=============================================================================[
-  Create an interface library (no output) with all Addon API dependencies for
-  linkage.
+Create an interface library (no output) with all Addon API dependencies for
+linkage.
 ]=============================================================================]#
 add_library (cmake-js-base INTERFACE)
 add_library (cmake-js::base ALIAS cmake-js-base)
@@ -242,13 +242,22 @@ if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
 endif ()
 
 #[=============================================================================[
-  Export a helper function for creating a dynamic ```*.node``` library, linked
-  to the Addon API interface.
+A helper function for creating a dynamic ```*.node``` library, linked
+to the Addon API interface.
+
+```
+
+cmakejs_create_napi_addon(\<name\> [ALIAS \<alias\>] [NAMESPACE \<namespace\>] [NAPI_VERSION \<version\>])
+
+```
 ]=============================================================================]#
 function(cmakejs_create_napi_addon name)
 
+  set(options)
   set(args ALIAS NAMESPACE NAPI_VERSION)
-  cmake_parse_arguments(ARG "" "${args}" "" "${ARGN}")
+  set(list_args)
+
+  cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
   # Generate the identifier for the resource library's namespace
   set(ns_re "[a-zA-Z_][a-zA-Z0-9_]*")
@@ -334,6 +343,12 @@ endfunction()
 
 #[=============================================================================[
 Add source files to an existing Napi Addon target.
+
+```
+
+cmakejs_napi_addon_add_sources(\<name\> [BASE_DIRS \<dirs\>])
+
+```
 ]=============================================================================]#
 function(cmakejs_napi_addon_add_sources name)
 
