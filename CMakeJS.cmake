@@ -180,7 +180,7 @@ function(cmakejs_create_napi_addon name)
 
   target_include_directories(${name}
     PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}>
+    $<BUILD_INTERFACE:${CMAKEJS_BINARY_DIR}/include/${PROJECT_NAME}>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   )
 
