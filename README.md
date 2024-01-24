@@ -35,7 +35,7 @@ cmakejs_create_napi_addon(addon
 Optionally, more Addon targets can be created from this API under one project tree, and helpful variables can be exposed:
 
 ```.cmake
-# optionally add a second lib with some more args, as an example of the API's possibilities...
+# optionally add more Addon targets, along with some more args, as an example of the API's possibilities and functions...
 
 cmakejs_create_napi_addon(addon_v7
   NAPI_VERSION 7
