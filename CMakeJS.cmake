@@ -81,7 +81,7 @@ if (NOT DEFINED CMAKE_JS_INC)
 
   find_program(CMAKE_JS_NPM_PACKAGE
     NAMES "cmake-js" "cmake-js.exe"
-    PATHS "${PROJECT_SOURCE_DIR}/node_modules/cmake-js/bin"
+    PATHS "${CMAKE_CURRENT_SOURCE_DIR}/node_modules/cmake-js/bin"
     DOC "cmake-js project-local npm package binary"
     REQUIRED
   )
@@ -300,11 +300,11 @@ function(cmakejs_create_napi_addon name)
     "BUILDING_NODE_EXTENSION"
   )
 
-  target_include_directories(${name}
-    PUBLIC
-    $<BUILD_INTERFACE:${CMAKEJS_BINARY_DIR}/include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  )
+  # target_include_directories(${name}
+  #   PUBLIC
+  #   $<BUILD_INTERFACE:${CMAKEJS_BINARY_DIR}/include/${PROJECT_NAME}>
+  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}> # PROJECT_NAME is not yet defined, so...
+  # )
 
   set_property(
     TARGET ${name}
