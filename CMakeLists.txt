@@ -17,10 +17,16 @@ cmakejs_create_napi_addon(addon
   src/demo/addon.cpp
 )
 
-# some more args as an example of the API's possibilities
+
+# Add a second lib along with some more args,
+# as an example of the API's extended possibilities
+# and functions...
 cmakejs_create_napi_addon(addon_v7
-  # SOURCES
-  src/demo/addon.cpp
   NAPI_VERSION 7
   NAMESPACE v7
+)
+
+cmakejs_napi_addon_add_sources(addon_v7
+  # SOURCES
+  src/demo/addon.cpp
 )
