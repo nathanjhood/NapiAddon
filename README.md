@@ -13,7 +13,7 @@ Builders are able to get Addons to compile and run using a very minimal CMake bu
 ```.cmake
 # CMakeLists.txt
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.12)
 
 # Add the path to 'CMakeJS.cmake' to the module path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
