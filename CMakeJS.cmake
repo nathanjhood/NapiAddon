@@ -87,6 +87,8 @@ function(cmakejs_create_napi_addon name)
   add_library(${name} SHARED)
   add_library("${alt_name}" ALIAS ${name})
 
+  target_link_libraries(${name} cmake-js::base)
+
   target_compile_definitions(${name}
     PRIVATE
     "CMAKEJS_ADDON_NAME=${name}"
@@ -100,17 +102,26 @@ function(cmakejs_create_napi_addon name)
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   )
 
-  target_link_libraries(${name} cmake-js::base)
+  set_property(
+    TARGET ${name}
+    PROPERTY ${name}_IS_NAPI_ADDON_LIBRARY TRUE
+  )
 
-  set_property(TARGET ${name} PROPERTY ${name}_IS_NAPI_ADDON_LIBRARY TRUE)
-  set_target_properties (${name}
+  set_target_properties(${name}
     PROPERTIES
+
     LIBRARY_OUTPUT_NAME "${name}"
+    LIBRARY_OUTPUT_NAME_DEBUG "d${name}"
     PREFIX ""
     SUFFIX ".node"
+
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/Debug"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/Debug"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin/Debug"
   )
 
   cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
