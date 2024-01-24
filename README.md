@@ -15,13 +15,16 @@ Builders are able to get Addons to compile and run using a very minimal CMake bu
 
 cmake_minimum_required(VERSION 3.28)
 
-# /path/to/CMakeJS.cmake
+# Add the path to 'CMakeJS.cmake' to the module path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+
+# include 'CMakeJS.cmake'. This can go before *or* after 'project()', since
+# we are not depending on the PROJECT_* vars to be defined :)
+include(CMakeJS)
 
 project (demo)
 
-include(CMakeJS)
-
+# can name the target anything...
 cmakejs_create_napi_addon(addon
   # SOURCES
   src/demo/addon.cpp
@@ -31,11 +34,13 @@ cmakejs_create_napi_addon(addon
 
 All that it takes to compile and run the above minimal build script is to call cmake-js from ```package.json```:
 
-```
+```.sh
 $ npm run install
+```
 
-// or
+or
 
+```.sh
 $ yarn install
 ```
 
