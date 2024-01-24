@@ -32,6 +32,22 @@ cmakejs_create_napi_addon(addon
 
 ```
 
+Optionally, more Addon targets can be created from this API under one project tree, and helpful variables can be exposed:
+
+```.cmake
+# optionally add a second lib with some more args, as an example of the API's possibilities...
+
+cmakejs_create_napi_addon(addon_v7
+  NAPI_VERSION 7
+  NAMESPACE v7
+)
+
+cmakejs_napi_addon_add_sources(addon_v7
+  # SOURCES
+  src/demo/addon.cpp
+)
+```
+
 All that it takes to compile and run the above minimal build script is to call cmake-js from ```package.json```:
 
 ```.sh
