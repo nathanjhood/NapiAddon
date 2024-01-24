@@ -133,8 +133,8 @@ This module defines
 # CMAKE_JS_INC is defined on all platforms when calling from cmake-js.
 # By checking whether this var is pre-defined, we can determine if we are
 # running from an npm script (via cmake-js), or from CMake directly...
-function(cmakejs_acquire_cmakejs)
-if (NOT DEFINED CMAKE_JS_EXECUTABLE)
+
+if (NOT DEFINED CMAKE_JS_INC)
 
   # ...and if we're calling from CMake directly, we need to set up some vars
   # that our build step depends on (these are predefined when calling via npm/cmake-js).
@@ -198,11 +198,11 @@ if (NOT DEFINED CMAKE_JS_EXECUTABLE)
   set(CMAKE_JS_LIB ${CMAKE_JS_LIB} CACHE STRING "cmake-js lib file." FORCE)
 
   # Log the vars to the console for sanity...
-  # if(VERBOSE)
+  if(VERBOSE)
     message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
     message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
     message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
-  # endif()
+  endif()
 
   # At this point, some warnings may occur re: the below (still investigating);
   # Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
@@ -215,16 +215,13 @@ else ()
   message(STATUS "CMakeJS Calling...")
 
   # Notwithstanding a quick sanity check, of course.
-  # if(VERBOSE)
+  if(VERBOSE)
     message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
     message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
     message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
-  # endif()
+  endif()
 
 endif ()
-endfunction()
-
-
 
 #[=============================================================================[
   Create an interface library (no output) with all Addon API dependencies for
