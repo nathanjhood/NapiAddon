@@ -1,25 +1,70 @@
+#[=============================================================================[
+  Check whether we have already been included
+]=============================================================================]#
+# Hypothetical version number...
+set(_version 8.0.0)
+
+cmake_minimum_required(VERSION 3.12)
+include(CMakeParseArguments)
+
+if(COMMAND cmakejs_napi_addon_add_sources)
+  if(NOT DEFINED _CMAKEJS_VERSION OR NOT (_version STREQUAL _CMAKEJS_VERSION))
+      message(WARNING "More than one CMakeJS version has been included in this project.")
+  endif()
+  # CMakeJS has already been included! Don't do anything
+  return()
+endif()
+
+set(_CMAKEJS_VERSION "${_version}" CACHE INTERNAL "CMakeJS version. Used for checking for conflicts")
+
+set(_CMAKEJS_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to 'CMakeJS.cmake' script")
 
 #[=============================================================================[
-  Include Node-API headers
+Provides ```NODE_API_HEADERS_DIR``` for NodeJS C Addon development files.
 ]=============================================================================]#
-execute_process(
-  COMMAND node -p "require('node-api-headers').include_dir"
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE NODE_API_HEADERS_DIR
-)
-string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR ${NODE_API_HEADERS_DIR})
-set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
+function(cmakejs_acquire_napi_c_files)
+  execute_process(
+    COMMAND node -p "require('node-api-headers').include_dir"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE NODE_API_HEADERS_DIR
+  )
+  string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR ${NODE_API_HEADERS_DIR})
+  set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
+
+  if(VERBOSE)
+    message(STATUS "Configuring Napi Addon: ${name}")
+  endif()
+
+endfunction()
+
+if(NOT DEFINED NODE_API_HEADERS_DIR)
+  cmakejs_acquire_napi_c_files()
+  message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
+endif()
 
 #[=============================================================================[
-  Include Node Addon wrappers
+Provides ```NODE_ADDON_API_DIR``` for NodeJS C++ Addon development files.
 ]=============================================================================]#
-execute_process(
-  COMMAND node -p "require('node-addon-api').include"
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE NODE_ADDON_API_DIR
-)
-string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
+function(cmakejs_acquire_napi_cpp_files)
+
+  execute_process(
+    COMMAND node -p "require('node-addon-api').include"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE NODE_ADDON_API_DIR
+  )
+  string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+  set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
+
+  if(VERBOSE)
+    message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
+  endif()
+
+endfunction()
+
+if(NOT DEFINED NODE_ADDON_API_DIR)
+  cmakejs_acquire_napi_cpp_files()
+  message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
+endif()
 
 #[=============================================================================[
   Create an interface library (no output) with all Addon API dependencies for
@@ -69,6 +114,10 @@ function(cmakejs_create_napi_addon name)
   endif()
 
   # Needs more validation...
+  if(DEFINED ARG_NAPI_VERSION AND (ARG_NAPI_VERSION LESS_EQUAL 0))
+    message(SEND_ERROR "NAPI_VERSION for ${name} is not a valid Integer number (${ARG_NAPI_VERSION})")
+  endif()
+
   if(NOT DEFINED ARG_NAPI_VERSION)
     if(NOT DEFINED NAPI_VERSION)
       set(NAPI_VERSION 8)
@@ -77,15 +126,17 @@ function(cmakejs_create_napi_addon name)
   endif()
 
   if(ARG_ALIAS)
-    set(alt_name "${ARG_ALIAS}")
-  elseif(ARG_NAMESPACE)
-    set(alt_name "${ARG_NAMESPACE}::${name}")
+    set(name_alt "${ARG_ALIAS}")
   else()
-    set(alt_name "${name}::${name}")
+    set(name_alt "${ARG_NAMESPACE}::${name}")
+  endif()
+
+  if(VERBOSE)
+    message(STATUS "Configuring Napi Addon: ${name}")
   endif()
 
   add_library(${name} SHARED)
-  add_library("${alt_name}" ALIAS ${name})
+  add_library("${name_alt}" ALIAS ${name})
 
   target_link_libraries(${name} cmake-js::base)
 
@@ -154,9 +205,9 @@ function(cmakejs_napi_addon_add_sources name)
   get_target_property(lib_namespace "${name}" ${name}_ADDON_NAMESPACE)
 
   foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+
     _cmakejs_normalize_path(input)
     get_filename_component(abs_in "${input}" ABSOLUTE)
-
     file(RELATIVE_PATH relpath "${ARG_BASE_DIRS}" "${abs_in}")
     if(relpath MATCHES "^\\.\\.")
       # For now we just error on files that exist outside of the soure dir.
