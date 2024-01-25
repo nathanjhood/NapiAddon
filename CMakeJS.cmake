@@ -318,14 +318,6 @@ function(cmakejs_create_napi_addon name)
 
   target_link_libraries(${name} cmake-js::base)
 
-  target_compile_definitions(${name}
-    PRIVATE
-    "CMAKEJS_ADDON_NAME=${name}"
-    "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
-    "NAPI_VERSION=${ARG_NAPI_VERSION}"
-    "BUILDING_NODE_EXTENSION"
-  )
-
   set_property(
     TARGET ${name}
     PROPERTY ${name}_IS_NAPI_ADDON_LIBRARY TRUE
@@ -350,6 +342,14 @@ function(cmakejs_create_napi_addon name)
   )
 
   cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
+
+  cmakejs_napi_addon_add_definitions(${name}
+    PRIVATE
+    "CMAKEJS_ADDON_NAME=${name}"
+    "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
+    "NAPI_VERSION=${ARG_NAPI_VERSION}"
+    "BUILDING_NODE_EXTENSION"
+  )
 
 endfunction()
 
@@ -399,5 +399,50 @@ function(cmakejs_napi_addon_add_sources name)
     target_sources(${name} PRIVATE "${abs_in}")
 
   endforeach()
+
+endfunction()
+
+#[=============================================================================[
+Add pre-processor definitions to an existing Napi Addon target.
+
+```
+cmakejs_napi_addon_add_definitions(\<name\> \<INTERFACE|PUBLIC|PRIVATE\> [items1...] [\<INTERFACE|PUBLIC|PRIVATE\> [items2...] ...])
+```
+]=============================================================================]#
+function(cmakejs_napi_addon_add_definitions name)
+
+  # Check that this is a Node Addon target
+  get_target_property(is_addon_lib ${name} ${name}_IS_NAPI_ADDON_LIBRARY)
+  if(NOT TARGET ${name} OR NOT is_addon_lib)
+    message(SEND_ERROR "'cmakejs_napi_addon_add_definitions()' called on target '${name}' which is not an existing napi addon library")
+    return()
+  endif()
+
+  set(options)
+  set(args)
+  set(list_args INTERFACE PRIVATE PUBLIC)
+
+  cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+  if(DEFINED ARG_INTERFACE)
+    target_compile_definitions(${name}
+      INTERFACE
+      "${ARG_INTERFACE}"
+    )
+  endif()
+
+  if(DEFINED ARG_PRIVATE)
+    target_compile_definitions(${name}
+      PRIVATE
+      "${ARG_PRIVATE}"
+    )
+  endif()
+
+  if(DEFINED ARG_PUBLIC)
+    target_compile_definitions(${name}
+      PUBLIC
+      "${ARG_PUBLIC}"
+    )
+  endif()
 
 endfunction()
