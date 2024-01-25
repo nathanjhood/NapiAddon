@@ -73,7 +73,8 @@ if (NOT DEFINED CMAKE_JS_INC)
     REQUIRED
   )
   if (NOT CMAKE_JS_EXECUTABLE)
-      message(FATAL_ERROR "cmake-js system installation not found! Please run 'npm -g install cmake-js@latest' and try again.")
+    message(FATAL_ERROR "cmake-js system installation not found! Please run 'npm -g install cmake-js@latest' and try again.")
+    return()
   endif()
 
   _cmakejs_normalize_path(CMAKE_JS_EXECUTABLE)
@@ -86,7 +87,8 @@ if (NOT DEFINED CMAKE_JS_INC)
     REQUIRED
   )
   if (NOT CMAKE_JS_NPM_PACKAGE)
-      message(FATAL_ERROR "cmake-js project-local npm package not found! Please run 'npm install' and try again.")
+    message(FATAL_ERROR "cmake-js project-local npm package not found! Please run 'npm install' and try again.")
+    return()
   endif()
 
   # Execute the CLI commands, and write their outputs into the cached vars
@@ -275,17 +277,20 @@ function(cmakejs_create_napi_addon name)
     # Check that the library name is also a valid namespace
     if(NOT name MATCHES "${ns_re}")
       message(SEND_ERROR "Library name is not a valid namespace. Specify the NAMESPACE argument")
+      return()
     endif()
     set(ARG_NAMESPACE "${name}")
   else()
     if(NOT ARG_NAMESPACE MATCHES "${ns_re}")
       message(SEND_ERROR "NAMESPACE for ${name} is not a valid C++ namespace identifier (${ARG_NAMESPACE})")
+      return()
     endif()
   endif()
 
   # Needs more validation...
   if(DEFINED ARG_NAPI_VERSION AND (ARG_NAPI_VERSION LESS_EQUAL 0))
     message(SEND_ERROR "NAPI_VERSION for ${name} is not a valid Integer number (${ARG_NAPI_VERSION})")
+    return()
   endif()
 
   if(NOT DEFINED ARG_NAPI_VERSION)
