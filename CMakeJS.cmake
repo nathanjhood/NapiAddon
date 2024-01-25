@@ -50,7 +50,6 @@ This module defines
   CMAKE_JS_INC, where to find node.h, etc.
   CMAKE_JS_LIB, the libraries required to use CMakeJs.
   CMAKE_JS_SRC, where to find required *.cpp files, if any
-  CMAKE_JS_FOUND, If false, do not try to use CMakeJs.
 
 #]=======================================================================]
 
@@ -59,6 +58,7 @@ This module defines
 # running from an npm script (via cmake-js), or from CMake directly...
 
 if (NOT DEFINED CMAKE_JS_INC)
+
   # ...and if we're calling from CMake directly, we need to set up some vars
   # that our build step depends on (these are predefined when calling via npm/cmake-js).
   if(VERBOSE)
@@ -127,6 +127,7 @@ if (NOT DEFINED CMAKE_JS_INC)
   #set (NAPI_CPP_EXCEPTIONS TRUE CACHE STRING "Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS")
   add_definitions(-DNAPI_CPP_EXCEPTIONS) # Also needs /EHsc
   # add_definitions(-DNAPI_DISABLE_CPP_EXCEPTIONS)
+
 else ()
 
   # ... we already are calling via npm/cmake-js, so we should already have all the vars we need!
@@ -157,7 +158,6 @@ function(cmakejs_acquire_node_executable)
   if(VERBOSE)
     message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
   endif()
-
 endfunction()
 
 if(NOT DEFINED NODE_EXECUTABLE)
@@ -165,6 +165,7 @@ if(NOT DEFINED NODE_EXECUTABLE)
   message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
 endif()
 
+# Resolve NodeJS development headers
 if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
   execute_process(
     COMMAND yarn install
@@ -192,9 +193,9 @@ function(cmakejs_acquire_napi_c_files)
   if(VERBOSE)
     message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
   endif()
-
 endfunction()
 
+# Acquire if needed...
 if(NOT DEFINED NODE_API_HEADERS_DIR)
   cmakejs_acquire_napi_c_files()
   message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
@@ -204,7 +205,6 @@ endif()
 Provides ```NODE_ADDON_API_DIR``` for NodeJS C++ Addon development files.
 ]=============================================================================]#
 function(cmakejs_acquire_napi_cpp_files)
-
   execute_process(
     COMMAND "${NODE_EXECUTABLE}" -p "require('node-addon-api').include"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -220,17 +220,20 @@ function(cmakejs_acquire_napi_cpp_files)
   if(VERBOSE)
     message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
   endif()
-
 endfunction()
 
+# Acquire if needed...
 if(NOT DEFINED NODE_ADDON_API_DIR)
   cmakejs_acquire_napi_cpp_files()
   message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
 endif()
 
 #[=============================================================================[
-Create an interface library (no output) with all Addon API dependencies for
-linkage.
+Silently create an interface library (no output) with all Addon API dependencies
+resolved, for Addon targets to link with.
+
+(This should be expanded to contain most of cmake-js' globally-required
+configuration)
 ]=============================================================================]#
 add_library (cmake-js-base INTERFACE)
 add_library (cmake-js::base ALIAS cmake-js-base)
@@ -242,16 +245,22 @@ if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
 endif ()
 
 #[=============================================================================[
-A helper function for creating a dynamic ```*.node``` library, linked
-to the Addon API interface.
+Exposes a user-side helper function for creating a dynamic ```*.node``` library,
+linked to the Addon API interface.
 
 ```
-
 cmakejs_create_napi_addon(\<name\> [ALIAS \<alias\>] [NAMESPACE \<namespace\>] [NAPI_VERSION \<version\>])
-
 ```
+
+(This should wrap the CMakeLists.txt-side requirements for building a Napi Addon)
 ]=============================================================================]#
 function(cmakejs_create_napi_addon name)
+
+  # Avoid duplicate target names
+  if(TARGET ${name})
+    message(SEND_ERROR "'cmakejs_create_napi_addon()' given target '${name}' which is already exists. Please choose a unique name for this Addon target.")
+    return()
+  endif()
 
   set(options)
   set(args ALIAS NAMESPACE NAPI_VERSION)
@@ -281,6 +290,7 @@ function(cmakejs_create_napi_addon name)
 
   if(NOT DEFINED ARG_NAPI_VERSION)
     if(NOT DEFINED NAPI_VERSION)
+      # default NAPI version to use if none specified
       set(NAPI_VERSION 8)
     endif()
     set(ARG_NAPI_VERSION ${NAPI_VERSION})
@@ -296,6 +306,8 @@ function(cmakejs_create_napi_addon name)
     message(STATUS "Configuring Napi Addon: ${name}")
   endif()
 
+  # Begin a new Napi Addon target
+
   add_library(${name} SHARED)
   add_library("${name_alt}" ALIAS ${name})
 
@@ -309,12 +321,6 @@ function(cmakejs_create_napi_addon name)
     "BUILDING_NODE_EXTENSION"
   )
 
-  # target_include_directories(${name}
-  #   PUBLIC
-  #   $<BUILD_INTERFACE:${CMAKEJS_BINARY_DIR}/include/${PROJECT_NAME}>
-  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}> # PROJECT_NAME is not yet defined, so...
-  # )
-
   set_property(
     TARGET ${name}
     PROPERTY ${name}_IS_NAPI_ADDON_LIBRARY TRUE
@@ -324,7 +330,6 @@ function(cmakejs_create_napi_addon name)
     PROPERTIES
 
     LIBRARY_OUTPUT_NAME "${name}"
-    # LIBRARY_OUTPUT_NAME_DEBUG "d${name}"
     PREFIX ""
     SUFFIX ".node"
 
@@ -332,6 +337,8 @@ function(cmakejs_create_napi_addon name)
     LIBRARY_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/bin"
 
+    # # Conventional C++-style debug settings might be useful to have...
+    # LIBRARY_OUTPUT_NAME_DEBUG "d${name}"
     # ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
     # LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
     # RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/bin/Debug"
@@ -345,13 +352,12 @@ endfunction()
 Add source files to an existing Napi Addon target.
 
 ```
-
 cmakejs_napi_addon_add_sources(\<name\> [BASE_DIRS \<dirs\>])
-
 ```
 ]=============================================================================]#
 function(cmakejs_napi_addon_add_sources name)
 
+  # Check that this is a Node Addon target
   get_target_property(is_addon_lib ${name} ${name}_IS_NAPI_ADDON_LIBRARY)
   if(NOT TARGET ${name} OR NOT is_addon_lib)
     message(SEND_ERROR "'cmakejs_napi_addon_add_sources()' called on target '${name}' which is not an existing napi addon library")
@@ -364,6 +370,7 @@ function(cmakejs_napi_addon_add_sources name)
   cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
   if(NOT ARG_BASE_DIRS)
+    # Default base directory of the passed-in source file(s)
     set(ARG_BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
   _cmakejs_normalize_path(ARG_BASE_DIRS)
@@ -372,13 +379,14 @@ function(cmakejs_napi_addon_add_sources name)
   # Generate the identifier for the resource library's namespace
   get_target_property(lib_namespace "${name}" ${name}_ADDON_NAMESPACE)
 
+  # All remaining unparsed args 'should' be source files for this target, so...
   foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
 
     _cmakejs_normalize_path(input)
     get_filename_component(abs_in "${input}" ABSOLUTE)
     file(RELATIVE_PATH relpath "${ARG_BASE_DIRS}" "${abs_in}")
     if(relpath MATCHES "^\\.\\.")
-      # For now we just error on files that exist outside of the soure dir.
+      # For now we just error on files that exist outside of the source dir.
       message(SEND_ERROR "Cannot add file '${input}': File must be in a subdirectory of ${ARG_BASE_DIRS}")
       continue()
     endif()
