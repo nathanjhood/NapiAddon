@@ -373,7 +373,7 @@ function(cmakejs_napi_addon_add_sources name)
   # Check that this is a Node Addon target
   get_target_property(is_addon_lib ${name} ${name}_IS_NAPI_ADDON_LIBRARY)
   if(NOT TARGET ${name} OR NOT is_addon_lib)
-    message(SEND_ERROR "'cmakejs_napi_addon_add_sources()' called on target '${name}' which is not an existing napi addon library")
+    message(SEND_ERROR "'cmakejs_napi_addon_add_sources()' called on '${name}' which is not an existing napi addon library")
     return()
   endif()
 
@@ -422,7 +422,7 @@ function(cmakejs_napi_addon_add_definitions name)
   # Check that this is a Node Addon target
   get_target_property(is_addon_lib ${name} ${name}_IS_NAPI_ADDON_LIBRARY)
   if(NOT TARGET ${name} OR NOT is_addon_lib)
-    message(SEND_ERROR "'cmakejs_napi_addon_add_definitions()' called on target '${name}' which is not an existing napi addon library")
+    message(SEND_ERROR "'cmakejs_napi_addon_add_definitions()' called on '${name}' which is not an existing napi addon library")
     return()
   endif()
 

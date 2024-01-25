@@ -26,7 +26,9 @@ cmakejs_create_napi_addon(addon
 
 ```
 
-Optionally, more Addon targets can be created from this API under one project tree, and helpful variables can be exposed:
+The module strives to be unopinionated by providing reasonable fallback behaviours that align closely with typical, expected CMake building conventions.
+
+Optionally, more Addon targets can be created from this API under one single project tree, and helpful variables may also be configured:
 
 ```.cmake
 
