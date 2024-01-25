@@ -156,6 +156,10 @@ function(cmakejs_acquire_node_executable)
     DOC "NodeJs executable binary"
     REQUIRED
   )
+  if (NOT NODE_EXECUTABLE)
+    message(FATAL_ERROR "NodeJS installation not found! Please check your paths and try again.")
+    return()
+  endif()
 
   if(VERBOSE)
     message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
@@ -174,6 +178,10 @@ if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE NODE_MODULES_DIR
   )
+  if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
+    message(FATAL_ERROR "Something went wrong - NodeJS modules installation failed!")
+    return()
+  endif()
 endif()
 
 #[=============================================================================[
@@ -425,24 +433,25 @@ function(cmakejs_napi_addon_add_definitions name)
   cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
   if(DEFINED ARG_INTERFACE)
-    target_compile_definitions(${name}
-      INTERFACE
-      "${ARG_INTERFACE}"
-    )
+    foreach(item IN LISTS ARG_INTERFACE)
+      target_compile_definitions(${name} INTERFACE "${item}")
+    endforeach()
   endif()
 
   if(DEFINED ARG_PRIVATE)
-    target_compile_definitions(${name}
-      PRIVATE
-      "${ARG_PRIVATE}"
-    )
+    foreach(item IN LISTS ARG_PRIVATE)
+      target_compile_definitions(${name} PRIVATE "${item}")
+    endforeach()
   endif()
 
   if(DEFINED ARG_PUBLIC)
-    target_compile_definitions(${name}
-      PUBLIC
-      "${ARG_PUBLIC}"
-    )
+    foreach(item IN LISTS ARG_PUBLIC)
+      target_compile_definitions(${name} PUBLIC "${item}")
+    endforeach()
   endif()
+
+  foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+    target_compile_definitions(${name} "${item}")
+  endforeach()
 
 endfunction()
