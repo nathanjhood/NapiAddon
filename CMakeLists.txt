@@ -1,3 +1,6 @@
+# This file represents a cmake-js CMake API user's typical use-case scnario
+# for illustrative purposes
+
 cmake_minimum_required(VERSION 3.12...3.28 FATAL_ERROR)
 
 # Add the path to 'CMakeJS.cmake' to this project's module path
