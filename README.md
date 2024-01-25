@@ -60,7 +60,15 @@ or
 $ yarn install
 ```
 
-*However*, the ```CMakeJS.cmake``` script does *not depend on being executed by cmake-js*, and will build independently using just CMake commands.
+*However*, the ```CMakeJS.cmake``` script does *not depend on being executed by cmake-js*, and can build addons independently of npm/yarn, using just native CMake commands:
+
+```.sh
+$ cmake --fresh -S . -B ./build
+
+# ...
+
+$ cmake --build ./build
+```
 
 Because of the above, IDE tooling integration should be assured.
 
