@@ -13,16 +13,12 @@ Builders are able to get Addons to compile and run using a very minimal CMake bu
 
 cmake_minimum_required(VERSION 3.12)
 
-# Add the path to 'CMakeJS.cmake' to the module path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
-# include 'CMakeJS.cmake'. This can go before *or* after 'project()', since
-# we are not depending on the PROJECT_* vars to be defined :)
 include(CMakeJS)
 
 project (demo)
 
-# can name the target anything...
 cmakejs_create_napi_addon(addon
   # SOURCES
   src/demo/addon.cpp
@@ -33,8 +29,6 @@ cmakejs_create_napi_addon(addon
 Optionally, more Addon targets can be created from this API under one project tree, and helpful variables can be exposed:
 
 ```.cmake
-# the builder may optionally add more Addon targets, along with some more args,
-# as an example of the API's possibilities and functions...
 
 cmakejs_create_napi_addon(addon_v7
   NAPI_VERSION 7
@@ -44,6 +38,11 @@ cmakejs_create_napi_addon(addon_v7
 cmakejs_napi_addon_add_sources(addon_v7
   # SOURCES
   src/demo/addon.cpp
+)
+
+cmakejs_napi_addon_add_definitions(addon_v7
+  PRIVATE
+  NAPI_CPP_EXCEPTIONS_MAYBE
 )
 ```
 
