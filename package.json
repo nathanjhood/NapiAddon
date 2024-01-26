@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "index.js",
   "types": "./lib/addon",
+  "engines": {
+		"node": ">= 14.15.0"
+	},
   "dependencies": {
     "cmake-js": "^7.3.0",
     "node-addon-api": "^6.1.0",
