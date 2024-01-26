@@ -31,6 +31,11 @@
     "cmake:reconfigure":  "cmake --fresh -S . -B ./build",
     "cmake:build":        "cmake --build ./build",
     "cmake:rebuild":      "cmake --fresh -S . -B ./build && cmake --build ./build",
-    "cmake:help":         "cmake --help"
+    "cmake:help":         "cmake --help",
+
+    "cpack:all":          "cpack -B ./build --config ./build/CPackConfig.cmake",
+    "cpack:zip":          "cpack -B ./build --config ./build/CPackConfig.cmake --generator ZIP",
+    "cpack:tar":          "cpack -B ./build --config ./build/CPackConfig.cmake --generator TAR",
+    "cpack:source":       "cpack -B ./build --config ./build/CPackSourceConfig.cmake"
   }
 }
