@@ -51,12 +51,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use Node.js 16.x
+      - name: Use Node.js 14.x
         if: ${{ !matrix.docker-arch }}
         uses: actions/setup-node@v3
         with:
           architecture: ${{ matrix.arch }}
-          node-version: 16.x
+          node-version: 14.x
 
       - name: run tests
         if: ${{ !matrix.docker-arch }}
