@@ -4,7 +4,8 @@
 # Hypothetical version number...
 set(_version 8.0.0)
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
+cmake_policy(VERSION 3.15)
 include(CMakeParseArguments)
 
 if(COMMAND cmakejs_napi_addon_add_sources)
