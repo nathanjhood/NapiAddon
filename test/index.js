@@ -1,3 +1,10 @@
+const platform = process.platform;
+var buildDir = "/build/lib/";
+
+if(platform === "win32")
+  buildDir = "\\build\\bin\\Release\\";
+
+
 function test() {
 
   let status = false;
@@ -25,7 +32,7 @@ function test_v7() {
 
   try {
 
-    const addon_v7 = require("../build/lib/addon_v7.node");
+    const addon_v7 = require(`..${buildDir}addon_v7.node`);
 
     console.log(addon_v7.hello());
     console.log(`Napi Version: ${addon_v7.version()}`);
