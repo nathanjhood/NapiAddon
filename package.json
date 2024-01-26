@@ -26,7 +26,6 @@
     "rebuild":              "cmake-js rebuild",
     "clean":                "cmake-js clean",
     "wipe":                 "cmake-js clean && rm -rvf ./node_modules",
-    "help":                 "cmake-js help",
 
     "cmakejs:install":      "cmake-js install     --generator Ninja",
     "cmakejs:postinstall":  "cmake-js compile     --generator Ninja",
