@@ -17,6 +17,7 @@ if(COMMAND cmakejs_napi_addon_add_sources)
 endif()
 
 set(_CMAKEJS_VERSION "${_version}" CACHE INTERNAL "CMakeJS version. Used for checking for conflicts")
+unset(_version)
 
 set(_CMAKEJS_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to 'CMakeJS.cmake' script")
 
@@ -44,7 +45,7 @@ FindCMakeJs.cmake
 
 Find the native CMakeJs includes, source, and library
 
-(This codeblock typically belongs in a file named 'FindCMakeJS.cmake' for 
+(This codeblock typically belongs in a file named 'FindCMakeJS.cmake' for
 distribution...)
 
 This module defines
