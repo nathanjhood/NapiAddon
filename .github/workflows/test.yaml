@@ -77,7 +77,7 @@ jobs:
         with:
           image: ${{ matrix.docker-image }}
           # shell: bash
-          options: --platform=${{ matrix.docker-arch }} -v ${{ github.workspace }}:/work -e CI=1
+          options: --platform=${{ matrix.docker-arch }} -e CI=1
           run: |
             if command -v apt-get &> /dev/null
             then
@@ -88,8 +88,6 @@ jobs:
               apk update
               apk add cmake make g++ gcc
             fi
-
-            cd /work
 
             npm install
             npm test
