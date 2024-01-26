@@ -23,6 +23,9 @@ cmakejs_create_napi_addon (addon
   src/demo/addon.cpp
 )
 
+# And that's all you need to build a Napi Addon!
+
+# EXTENDED EXAMPLE:
 
 # it is possible to create as many addons as one wishes; here, an example of
 # the proposed API's extended possibilities and functions... just to check that
@@ -43,6 +46,8 @@ cmakejs_napi_addon_add_definitions (addon_v7
   NAPI_CPP_EXCEPTIONS_MAYBE
 )
 
+# TESTING AND PACKING:
+
 # Plenty of room left here for builders to explore CPack, CTest, and 'export()'
 # their Addon target(s) as conventional CMake packages... the below example
 # shows how to do that for a Napi Addon, and has been moved into it's own file,
@@ -51,7 +56,7 @@ list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/share/cmake/Modules")
 
 if(TRUE)
   enable_testing()
-  include("./test/tests.cmake")
+  include("${PROJECT_SOURCE_DIR}/test/tests.cmake")
   include(ExportNapiAddon)
 endif()
 
