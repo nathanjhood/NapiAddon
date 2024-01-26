@@ -1,20 +1,17 @@
-add_test(
-  NAME Hello
-  COMMAND "${NODE_EXECUTABLE}" "./test/hello.js"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-)
-set_tests_properties(Hello PROPERTIES PASS_REGULAR_EXPRESSION " passed.")
+# define a function to simplify adding tests
+function(do_test arg)
+    add_test(
+      NAME test_${arg}
+      COMMAND "${NODE_EXECUTABLE}" "./test/${arg}.js"
+      WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    )
+    set_tests_properties(test_${arg}
+      PROPERTIES PASS_REGULAR_EXPRESSION " passed."
+    )
+endfunction(do_test)
 
-add_test(
-  NAME Version
-  COMMAND "${NODE_EXECUTABLE}" "./test/version.js"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-)
-set_tests_properties(Version PROPERTIES PASS_REGULAR_EXPRESSION " passed.")
-
-add_test(
-  NAME HelloAndVersionWithV7
-  COMMAND "${NODE_EXECUTABLE}" "./test/index.js"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-)
-set_tests_properties(HelloAndVersionWithV7 PROPERTIES PASS_REGULAR_EXPRESSION " passed.")
+do_test(hello)
+do_test(version)
+do_test(hello_v7)
+do_test(version_v7)
+do_test(index)
