@@ -364,7 +364,7 @@ function(cmakejs_create_napi_addon name)
     cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
 
     cmakejs_napi_addon_add_definitions(${name}
-      PRIVATE
+      PUBLIC
       "CMAKEJS_ADDON_NAME=${name}"
       "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
       "NAPI_VERSION=${ARG_NAPI_VERSION}"

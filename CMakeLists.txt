@@ -51,11 +51,7 @@ list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/share/cmake/Modules")
 
 if(TRUE)
   enable_testing()
-  add_test(
-    NAME HelloAndVersion
-    COMMAND "${NODE_EXECUTABLE}" "./test/index.js"
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  )
+  include("./test/tests.cmake")
   include(ExportNapiAddon)
 endif()
 
