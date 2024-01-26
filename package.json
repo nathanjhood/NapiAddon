@@ -17,14 +17,14 @@
   "scripts": {
     "start":              "node ./test/index.js",
 
-    "preinstall":         "cmake-js install",
-    "postinstall":        "cmake-js compile",
-    "configure":          "cmake-js configure",
-    "reconfigure":        "cmake-js reconfigure",
-    "build":              "cmake-js build",
-    "rebuild":            "cmake-js rebuild",
-    "clean":              "cmake-js clean",
-    "wipe":               "cmake-js clean && rm -rvf ./node_modules",
+    "install":            "cmake-js install     --generator Ninja",
+    "postinstall":        "cmake-js compile     --generator Ninja",
+    "configure":          "cmake-js configure   --generator Ninja",
+    "reconfigure":        "cmake-js reconfigure --generator Ninja",
+    "build":              "cmake-js build       --generator Ninja",
+    "rebuild":            "cmake-js rebuild     --generator Ninja",
+    "clean":              "cmake-js clean       --generator Ninja",
+    "wipe":               "cmake-js clean       --generator Ninja && rm -rvf ./node_modules",
     "help":               "cmake-js help",
 
     "cmake:configure":    "cmake -S . -B ./build",
