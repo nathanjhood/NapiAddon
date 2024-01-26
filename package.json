@@ -5,9 +5,12 @@
   "license": "MIT",
   "main": "index.js",
   "types": "./lib/addon",
+  "engines": {
+		"node": ">= 14.15.0"
+	},
   "dependencies": {
     "cmake-js": "^7.3.0",
-    "node-addon-api": "^7.1.0",
+    "node-addon-api": "^6.1.0",
     "node-api-headers": "^1.1.0"
   },
   "devDependencies": {
@@ -16,7 +19,7 @@
   },
   "scripts": {
     "start":                "node ./test/index.js",
-    "test":                 "cd ./build && ctest",
+    "test":                 "cd build && ctest -C Release",
 
     "install":              "cmake-js install",
     "postinstall":          "cmake-js compile",
