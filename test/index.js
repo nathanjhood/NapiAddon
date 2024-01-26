@@ -1,5 +1,7 @@
 function test() {
 
+  let status = false;
+
   try {
 
     const addon = require("../lib/addon.node");
@@ -7,13 +9,19 @@ function test() {
     console.log(addon.hello());
     console.log(`Napi Version: ${addon.version()}`);
 
+    status = true;
+
   } catch(e) {
 
-    console.log(`Error: ${e}`);
+    console.log(`${e}`);
   }
+
+  return status;
 };
 
 function test_v7() {
+
+  let status = false;
 
   try {
 
@@ -22,11 +30,23 @@ function test_v7() {
     console.log(addon_v7.hello());
     console.log(`Napi Version: ${addon_v7.version()}`);
 
+    status = true;
+
   } catch(e) {
 
-    console.log(`Error: ${e}`);
+    console.log(`${e}`);
   }
+
+  return status;
 };
 
-test();
-test_v7();
+const res_test = test();
+const res_test_v7 = test_v7();
+
+if((!res_test) || (!res_test_v7))
+{
+  console.log("tests failed.");
+  return false;
+}
+
+console.log("tests passed.");
