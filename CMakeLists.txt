@@ -47,8 +47,15 @@ cmakejs_napi_addon_add_definitions (addon_v7
 # their Addon target(s) as conventional CMake packages... the below example
 # shows how to do that for a Napi Addon, and has been moved into it's own file,
 # to keep the API example clean and seperate.
+list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/share/cmake/Modules")
+
 if(TRUE)
-  list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/share/cmake/Modules")
+  enable_testing()
+  add_test(
+    NAME HelloAndVersion
+    COMMAND "${NODE_EXECUTABLE}" "./test/index.js"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  )
   include(ExportNapiAddon)
 endif()
 
