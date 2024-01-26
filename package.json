@@ -16,6 +16,7 @@
   },
   "scripts": {
     "start":                "node ./test/index.js",
+    "test":                 "cd ./build && ctest",
 
     "install":              "cmake-js install     --generator Ninja",
     "postinstall":          "cmake-js compile     --generator Ninja",
