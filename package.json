@@ -7,8 +7,8 @@
   "types": "./lib/addon",
   "dependencies": {
     "cmake-js": "^7.3.0",
-    "node-addon-api": "*",
-    "node-api-headers": "*"
+    "node-addon-api": "^6.1.0",
+    "node-api-headers": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
