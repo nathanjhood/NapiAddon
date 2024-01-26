@@ -15,31 +15,41 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "start":              "node ./test/index.js",
+    "start":                "node ./test/index.js",
 
-    "install":            "cmake-js install     --generator Ninja",
-    "postinstall":        "cmake-js compile     --generator Ninja",
-    "configure":          "cmake-js configure   --generator Ninja",
-    "reconfigure":        "cmake-js reconfigure --generator Ninja",
-    "build":              "cmake-js build       --generator Ninja",
-    "rebuild":            "cmake-js rebuild     --generator Ninja",
-    "clean":              "cmake-js clean       --generator Ninja",
-    "wipe":               "cmake-js clean       --generator Ninja && rm -rvf ./node_modules",
-    "help":               "cmake-js help",
+    "install":              "cmake-js install     --generator Ninja",
+    "postinstall":          "cmake-js compile     --generator Ninja",
+    "configure":            "cmake-js configure   --generator Ninja",
+    "reconfigure":          "cmake-js reconfigure --generator Ninja",
+    "build":                "cmake-js build       --generator Ninja",
+    "rebuild":              "cmake-js rebuild     --generator Ninja",
+    "clean":                "cmake-js clean       --generator Ninja",
+    "wipe":                 "cmake-js clean       --generator Ninja && rm -rvf ./node_modules",
+    "help":                 "cmake-js help",
 
-    "cmake:configure":    "cmake -S . -B ./build",
-    "cmake:reconfigure":  "cmake --fresh -S . -B ./build",
-    "cmake:build":        "cmake --build ./build",
-    "cmake:rebuild":      "cmake --fresh -S . -B ./build && cmake --build ./build",
-    "cmake:help":         "cmake --help",
+    "cmakejs:install":      "cmake-js install     --generator Ninja",
+    "cmakejs:postinstall":  "cmake-js compile     --generator Ninja",
+    "cmakejs:configure":    "cmake-js configure   --generator Ninja",
+    "cmakejs:reconfigure":  "cmake-js reconfigure --generator Ninja",
+    "cmakejs:build":        "cmake-js build       --generator Ninja",
+    "cmakejs:rebuild":      "cmake-js rebuild     --generator Ninja",
+    "cmakejs:clean":        "cmake-js clean       --generator Ninja",
+    "cmakejs:wipe":         "cmake-js clean       --generator Ninja && rm -rvf ./node_modules",
+    "cmakejs:help":         "cmake-js help",
 
-    "ctest":              "cd ./build && ctest",
-    "ctest:help":         "ctest --help",
+    "cmake:configure":      "cmake -S . -B ./build",
+    "cmake:reconfigure":    "cmake --fresh -S . -B ./build",
+    "cmake:build":          "cmake --build ./build",
+    "cmake:rebuild":        "cmake --fresh -S . -B ./build && cmake --build ./build",
+    "cmake:help":           "cmake --help",
 
-    "cpack:all":          "cpack -B ./build --config ./build/CPackConfig.cmake",
-    "cpack:zip":          "cpack -B ./build --config ./build/CPackConfig.cmake --generator ZIP",
-    "cpack:tar":          "cpack -B ./build --config ./build/CPackConfig.cmake --generator TAR",
-    "cpack:source":       "cpack -B ./build --config ./build/CPackSourceConfig.cmake",
-    "cpack:help":         "cpack --help"
+    "ctest":                "cd ./build && ctest",
+    "ctest:help":           "ctest --help",
+
+    "cpack:all":            "cpack -B ./build --config ./build/CPackConfig.cmake",
+    "cpack:zip":            "cpack -B ./build --config ./build/CPackConfig.cmake --generator ZIP",
+    "cpack:tar":            "cpack -B ./build --config ./build/CPackConfig.cmake --generator TAR",
+    "cpack:source":         "cpack -B ./build --config ./build/CPackSourceConfig.cmake",
+    "cpack:help":           "cpack --help"
   }
 }
