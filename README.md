@@ -6,7 +6,7 @@ The file of interest here is the one named [```CMakeJS.cmake```](https://github.
 
 The proposed API also does not clash with any pre-existing projects, by not imposing itself on users unless they specifically call the function within their build script. Adoption of this proposed API would be entirely optional, and especially helpful for newcomers.
 
-# Minimal setup
+## Minimal setup
 
 Builders are able to get Addons to compile and run using a very minimal CMake build script:
 
@@ -15,6 +15,7 @@ Builders are able to get Addons to compile and run using a very minimal CMake bu
 
 cmake_minimum_required(VERSION 3.12)
 
+# path to CMakeJS.cmake
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 include(CMakeJS)
@@ -54,6 +55,8 @@ cmakejs_napi_addon_add_definitions(addon_v7
 )
 ```
 
+## Builds with either cmake-js or CMake
+
 All that it takes to compile and run the above minimal build script is to call cmake-js from ```package.json```:
 
 ```.sh
@@ -76,7 +79,9 @@ $ cmake --fresh -S . -B ./build
 $ cmake --build ./build
 ```
 
-Because of the above, IDE tooling integration should be assured.
+Because of the above, IDE tooling integration should also be assured.
+
+## CTest and CPack
 
 CTest and CPack have also been carefully tested against the demo project, to confirm the proposed API's ability to support both.
 
@@ -96,11 +101,13 @@ $ cpack --config CPackSourceConfig.cmake
 # doing zip/tar of addon source code....
 ```
 
-By exporting an interface library under cmake-js' own namespace, the CMakeJS.cmake file can easily be shipped in the cmake-js package tree, and automatically included by the cmake-js CLI, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
+## Deeper CMake integration
+
+By exporting an interface library under cmake-js' own namespace, the CMakeJS.cmake file can easily be shipped in the cmake-js package tree, making the NodeJS Addon API automatically available to builders by simply having the cmake-js CLI pass in ```-DCMAKE_MODULE_PATH:PATH=/path/to/CMakeJS.cmake```, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
 
 Builders will also find that their cmake-js - powered Addon targets also work well with CMake's ```export()``` and ```install()``` routines, meaning that their Addon projects also work as CMake modules.
 
-# Intentions
+## Intentions
 
 ```CMakeJS.cmake``` as presented is rough/unrefined and missing several features it would be worth looking closer at (although quickly improving), but already presents a working UX proposal.
 
