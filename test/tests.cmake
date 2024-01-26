@@ -1,3 +1,12 @@
+# Make a list of tests to do (should match the test's filename)
+list(APPEND TESTS
+  hello
+  version
+  hello_v7
+  version_v7
+  index
+)
+
 # define a function to simplify adding tests
 function(do_test arg)
     add_test(
@@ -10,8 +19,7 @@ function(do_test arg)
     )
 endfunction(do_test)
 
-do_test(hello)
-do_test(version)
-do_test(hello_v7)
-do_test(version_v7)
-do_test(index)
+# run the tests
+foreach(TEST IN LISTS TESTS)
+    do_test("${TEST}")
+endforeach()
