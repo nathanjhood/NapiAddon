@@ -50,3 +50,4 @@ if((!res_test) || (!res_test_v7))
 }
 
 console.log("tests passed.");
+return true;
