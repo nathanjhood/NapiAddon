@@ -1,8 +1,8 @@
 const platform = process.platform;
-var buildDir = "build/lib";
+var buildDir = "/build/lib/";
 
 if(platform === "windows")
-  buildDir = "build/bin/Release";
+  buildDir = "\\build\\bin\\Release\\";
 
 
 function test_hello_v7() {
@@ -11,7 +11,7 @@ function test_hello_v7() {
 
   try {
 
-    const addon = require(`../${buildDir}/addon_v7.node`);
+    const addon = require(`..${buildDir}addon_v7.node`);
 
     console.log(addon.hello());
 
