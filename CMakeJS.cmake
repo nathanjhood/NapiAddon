@@ -261,8 +261,11 @@ target_include_directories(cmake-js-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API
 target_sources(cmake-js-base INTERFACE ${CMAKE_JS_SRC})
 target_link_libraries(cmake-js-base INTERFACE "${CMAKE_JS_LIB}")
 target_compile_definitions(cmake-js-base INTERFACE "BUILDING_NODE_EXTENSION")
-if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-    execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "Select the MSVC runtime library for use by compilers targeting the MSVC ABI." FORCE)
+    if(CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
+      execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+    endif()
 endif()
 
 #[=============================================================================[
