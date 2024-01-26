@@ -95,19 +95,19 @@ if (NOT DEFINED CMAKE_JS_INC)
   # Execute the CLI commands, and write their outputs into the cached vars
   # where the remaining build processes expect them to be...
   execute_process(
-    COMMAND ${CMAKE_JS_EXECUTABLE} "print-cmakejs-include" "--log-level error"
+    COMMAND "${CMAKE_JS_EXECUTABLE}" "print-cmakejs-include" "--log-level error" "--generator ${CMAKE_GENERATOR}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE CMAKE_JS_INC
   )
 
   execute_process(
-    COMMAND ${CMAKE_JS_EXECUTABLE} "print-cmakejs-src" "--log-level error"
+    COMMAND "${CMAKE_JS_EXECUTABLE}" "print-cmakejs-src" "--log-level error" "--generator ${CMAKE_GENERATOR}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE CMAKE_JS_SRC
   )
 
   execute_process(
-    COMMAND ${CMAKE_JS_EXECUTABLE} "print-cmakejs-lib" "--log-level error"
+    COMMAND "${CMAKE_JS_EXECUTABLE}" "print-cmakejs-lib" "--log-level error" "--generator ${CMAKE_GENERATOR}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE CMAKE_JS_LIB
   )
@@ -117,13 +117,13 @@ if (NOT DEFINED CMAKE_JS_INC)
   _cmakejs_normalize_path(CMAKE_JS_SRC)
   _cmakejs_normalize_path(CMAKE_JS_LIB)
 
-  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
-  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
-  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC "${CMAKE_JS_INC}")
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC "${CMAKE_JS_SRC}")
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB "${CMAKE_JS_LIB}")
 
-  set(CMAKE_JS_INC ${CMAKE_JS_INC} CACHE STRING "cmake-js include directory." FORCE)
-  set(CMAKE_JS_SRC ${CMAKE_JS_SRC} CACHE STRING "cmake-js source file." FORCE)
-  set(CMAKE_JS_LIB ${CMAKE_JS_LIB} CACHE STRING "cmake-js lib file." FORCE)
+  set(CMAKE_JS_INC "${CMAKE_JS_INC}" CACHE STRING "cmake-js include directory." FORCE)
+  set(CMAKE_JS_SRC "${CMAKE_JS_SRC}" CACHE STRING "cmake-js source file." FORCE)
+  set(CMAKE_JS_LIB "${CMAKE_JS_LIB}" CACHE STRING "cmake-js lib file." FORCE)
 
   # At this point, some warnings may occur re: the below (still investigating);
   # Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
@@ -253,9 +253,9 @@ configuration)
 ]=============================================================================]#
 add_library (cmake-js-base INTERFACE)
 add_library (cmake-js::base ALIAS cmake-js-base)
-target_include_directories (cmake-js-base INTERFACE ${CMAKE_JS_INC} ${NODE_API_HEADERS_DIR} ${NODE_ADDON_API_DIR})
+target_include_directories (cmake-js-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
 target_sources (cmake-js-base INTERFACE ${CMAKE_JS_SRC})
-target_link_libraries (cmake-js-base ${CMAKE_JS_LIB})
+target_link_libraries (cmake-js-base INTERFACE "${CMAKE_JS_LIB}")
 if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
   execute_process (COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
 endif ()
