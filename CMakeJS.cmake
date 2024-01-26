@@ -256,8 +256,9 @@ add_library (cmake-js::base ALIAS cmake-js-base)
 target_include_directories (cmake-js-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
 target_sources (cmake-js-base INTERFACE ${CMAKE_JS_SRC})
 target_link_libraries (cmake-js-base INTERFACE "${CMAKE_JS_LIB}")
+target_compile_definitions (cmake-js-base INTERFACE "BUILDING_NODE_EXTENSION")
 if (MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-  execute_process (COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+  execute_process (COMMAND "${CMAKE_AR}" "def ${CMAKE_JS_NODELIB_DEF}" "out ${CMAKE_JS_NODELIB_TARGET}" "${CMAKE_STATIC_LINKER_FLAGS}")
 endif ()
 
 #[=============================================================================[
