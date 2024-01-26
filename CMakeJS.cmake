@@ -44,6 +44,9 @@ FindCMakeJs.cmake
 
 Find the native CMakeJs includes, source, and library
 
+(This codeblock typically belongs in a file named 'FindCMakeJS.cmake' for 
+distribution...)
+
 This module defines
 
 ::
@@ -248,7 +251,7 @@ endif()
 Silently create an interface library (no output) with all Addon API dependencies
 resolved, for Addon targets to link with.
 
-(This should be expanded to contain most of cmake-js' globally-required
+(This should be expanded to contain most of cmake-js globally-required
 configuration)
 #]=============================================================================]
 add_library(cmake-js-base INTERFACE)
@@ -432,7 +435,6 @@ function(cmakejs_napi_addon_add_definitions name)
     set(options)
     set(args)
     set(list_args INTERFACE PRIVATE PUBLIC)
-
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
     if(DEFINED ARG_INTERFACE)
