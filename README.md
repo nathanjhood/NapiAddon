@@ -2,8 +2,6 @@
 
 [A proposed CMake API for cmake-js v8](https://github.com/cmake-js/cmake-js/issues/310) (including a demo consumer project).
 
-![CTest](https://github.com/nathanjhood/NapiAddon/actions/workflows/test.yaml/badge.svg)
-
 The file of interest here is the one named [```CMakeJS.cmake```](https://github.com/nathanjhood/NapiAddon/blob/main/CMakeJS.cmake) - this file is a rough CMake module that builders can include in their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target by using ```cmakejs_create_napi_addon()```, which creates a target with all the reasonable defaults taken care of for building a Napi Asson - but, intermediate/advanced users still have scope to override any of these defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target(s), if they so wish.
 
 The proposed API also does not clash with any pre-existing projects, by not imposing itself on users unless they specifically call the function within their build script. Adoption of this proposed API would be entirely optional, and especially helpful for newcomers.
