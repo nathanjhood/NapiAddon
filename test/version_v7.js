@@ -2,7 +2,7 @@ const platform = process.platform;
 var buildDir = "build/lib";
 
 if(platform === "windows")
-  buildDir = "build/lib/Release";
+  buildDir = "build/bin/Release";
 
 
 function test_version_v7() {
