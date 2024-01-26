@@ -1,7 +1,7 @@
 const platform = process.platform;
 var buildDir = "/build/lib/";
 
-if(platform === "windows")
+if(platform === "win32")
   buildDir = "\\build\\bin\\Release\\";
 
 
