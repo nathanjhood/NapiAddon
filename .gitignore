@@ -200,3 +200,5 @@ yarn.lock
 lib/noderc.json
 src/noderc/lib.cpp
 src/noderc/intermediate
+
+_CPack_Packages
