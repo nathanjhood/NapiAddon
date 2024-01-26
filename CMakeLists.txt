@@ -44,11 +44,13 @@ cmakejs_napi_addon_add_definitions (addon_v7
 )
 
 # Plenty of room left here for builders to explore CPack, CTest, and 'export()'
-# their Addon target(s) as conventional CMake packages... the example here
-# has been moved into it's own file, to keep the API example clean.
-# It's just worth checking that CPack, CTest, and 'export()' are working as they
-# should and our API is not throwing any nasty errors :)
+# their Addon target(s) as conventional CMake packages... the below example
+# shows how to do that for a Napi Addon, and has been moved into it's own file,
+# to keep the API example clean and seperate.
 if(TRUE)
   list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/share/cmake/Modules")
   include(ExportNapiAddon)
 endif()
+
+# It's just worth checking that CPack, CTest, and 'export()' are working as they
+# should and our API is not throwing any nasty errors :)
