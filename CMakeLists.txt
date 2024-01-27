@@ -33,7 +33,7 @@ cmakejs_create_napi_addon (addon
 
 cmakejs_create_napi_addon (addon_v7
   NAPI_VERSION 7
-  NAMESPACE addon::v7
+  NAMESPACE v7
 )
 
 cmakejs_napi_addon_add_sources (addon_v7
