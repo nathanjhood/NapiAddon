@@ -13,10 +13,8 @@
 # define STRINGIFY(n) STRINGIFY_HELPER(n)
 #endif
 
-#if __cplusplus >= 201703L
-namespace Napi {
-#endif
-
+namespace Napi
+{
 namespace NAPI_CPP_CUSTOM_NAMESPACE
 {
 
@@ -52,13 +50,10 @@ NODE_API_MODULE(CMAKEJS_ADDON_NAME, Init) // (name to use, initializer to use)
 } // namespace NAPI_CPP_CUSTOM_NAMESPACE
 
 // Export our custom namespace to outside of the Napi namespace, providing an
-// alias to the Napi Addon API; e.g., 'addon::Object()' (Requires C++17)
-#if __cplusplus >= 201703L
-} // namespace Napi
+// alias to the Napi Addon API; e.g., 'addon::Object()'
 namespace CMAKEJS_ADDON_NAME {
   using namespace Napi::NAPI_CPP_CUSTOM_NAMESPACE;
 }
-#endif
 
 #else
  #warning "Warning: Cannot find '<napi.h>' - try running 'npm -g install cmake-js'..."
