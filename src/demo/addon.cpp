@@ -48,6 +48,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 NODE_API_MODULE(CMAKEJS_ADDON_NAME, Init) // (name to use, initializer to use)
 
 } // namespace NAPI_CPP_CUSTOM_NAMESPACE
+} // namespace Napi
 
 // Export our custom namespace to outside of the Napi namespace, providing an
 // alias to the Napi Addon API; e.g., 'addon::Object()'
