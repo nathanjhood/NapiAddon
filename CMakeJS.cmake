@@ -100,19 +100,19 @@ if (NOT DEFINED CMAKE_JS_INC)
     # where the remaining build processes expect them to be...
     execute_process(
       COMMAND "${CMAKE_JS_EXECUTABLE}" "print-cmakejs-include" "--log-level error" "--generator ${CMAKE_GENERATOR}"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       OUTPUT_VARIABLE CMAKE_JS_INC
     )
 
     execute_process(
       COMMAND "${CMAKE_JS_EXECUTABLE}" "print-cmakejs-src" "--log-level error" "--generator ${CMAKE_GENERATOR}"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       OUTPUT_VARIABLE CMAKE_JS_SRC
     )
 
     execute_process(
       COMMAND "${CMAKE_JS_EXECUTABLE}" "print-cmakejs-lib" "--log-level error" "--generator ${CMAKE_GENERATOR}"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       OUTPUT_VARIABLE CMAKE_JS_LIB
     )
 
@@ -144,6 +144,10 @@ else ()
 
 endif ()
 
+file(GLOB CMAKE_JS_INC_FILES "${CMAKE_JS_INC}/*.h")
+file(GLOB CMAKE_JS_INC_FILES "${CMAKE_JS_INC}/**/*.h")
+source_group("cmake-js v${_version} Node ${NODE_VERSION}" FILES "${CMAKE_JS_INC_FILES}")
+
 # Log the vars to the console for sanity...
 if(VERBOSE)
     message(DEBUG "CMAKE_JS_INC = ${CMAKE_JS_INC}")
@@ -166,20 +170,30 @@ function(cmakejs_acquire_node_executable)
         return()
     endif()
 
+    execute_process(
+      COMMAND "${NODE_EXECUTABLE}" "--version"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      OUTPUT_VARIABLE NODE_VERSION
+    )
+    string(REGEX REPLACE "[\r\n\"]" "" NODE_VERSION "${NODE_VERSION}")
+    set(NODE_VERSION "${NODE_VERSION}" CACHE STRING "" FORCE)
+
     if(VERBOSE)
         message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
+        message(STATUS "NODE_VERSION: ${NODE_VERSION}")
     endif()
 endfunction()
 
 if(NOT DEFINED NODE_EXECUTABLE)
     cmakejs_acquire_node_executable()
     message(STATUS "NODE_EXECUTABLE: ${NODE_EXECUTABLE}")
+    message(STATUS "NODE_VERSION: ${NODE_VERSION}")
 endif()
 
 # Resolve NodeJS development headers
 # TODO: This code block is quite problematic, since:
 # 1 - it might trigger a build run, depending on how the builder has set up their package.json scripts...
-# 2 - it also currently assumes a preference for yarn over npm (and the others)...
+# 2 X it also currently assumes a preference for yarn over npm (and the others)...
 # 3 - finally, because of how cmake-js works, it might create Ninja-build artefacts,
 # even when the CMake user specifies a different generator to CMake manually...
 if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
@@ -208,7 +222,7 @@ function(cmakejs_acquire_napi_c_files)
     set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
 
     file(GLOB NODE_API_INC_FILES "${NODE_API_HEADERS_DIR}/*.h")
-    source_group("Node Addon API (C)" FILES ${NODE_API_INC_FILES})
+    source_group("Node Addon API (C)" FILES "${NODE_API_INC_FILES}")
 
     if(VERBOSE)
         message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
@@ -258,7 +272,7 @@ configuration)
 add_library                 (cmake-js-addon-base INTERFACE)
 add_library                 (cmake-js::addon-base ALIAS cmake-js-addon-base)
 target_include_directories  (cmake-js-addon-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
-target_sources              (cmake-js-addon-base INTERFACE ${CMAKE_JS_SRC})
+target_sources              (cmake-js-addon-base INTERFACE "${CMAKE_JS_SRC}")
 target_link_libraries       (cmake-js-addon-base INTERFACE "${CMAKE_JS_LIB}")
 target_compile_definitions  (cmake-js-addon-base INTERFACE "BUILDING_NODE_EXTENSION")
 # Signal a basic C++11 feature to require C++11.
