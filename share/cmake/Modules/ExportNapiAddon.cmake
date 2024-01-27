@@ -10,7 +10,7 @@ file(COPY
 )
 
 # Make a list of targets to export (cmake-js-base is required)
-list(APPEND TARGETS addon addon_v7 cmake-js-base)
+list(APPEND TARGETS addon addon_v7 cmake-js-addon-base)
 
 # Collect and export targets
 set (${PROJECT_NAME}_TARGETS "${TARGETS}" CACHE STRING "Targets to be built." FORCE)
@@ -67,7 +67,7 @@ set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_VERSION_PATCH})
 set(CPACK_PACKAGE_VERSION_TWEAK ${PROJECT_VERSION_VERSION_TWEAK})
 set(CPACK_RESOURCE_FILE_LICENSE ${PROJECT_SOURCE_DIR}/LICENSE)
-set(CPACK_RESOURCE_FILE_README ${PROJECT_SOURCE_DIR}/README.md)
+set(CPACK_RESOURCE_FILE_README  ${PROJECT_SOURCE_DIR}/README.md)
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
@@ -76,6 +76,7 @@ set(CPACK_SOURCE_IGNORE_FILES
     /*.zip
     /*.tar
     /*.tar.*
+    /.env*
     /.git/*
     /.cmake
     /.github
