@@ -8,11 +8,18 @@
 
 #include <napi.h>
 
+#ifndef STRINGIFY
+# define STRINGIFY(n) STRINGIFY_HELPER(n)
+# define STRINGIFY_HELPER(n) #n
+#endif
+
+namespace Napi
+{
 namespace NAPI_CPP_CUSTOM_NAMESPACE
 {
 
 Napi::Value Hello(const Napi::CallbackInfo& info) {
-  return Napi::String::New(info.Env(),  "addon is online!");
+  return Napi::String::New(info.Env(), STRINGIFY(CMAKEJS_ADDON_NAME)".node is online!");
 }
 
 Napi::Value Version(const Napi::CallbackInfo& info) {
@@ -41,6 +48,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 NODE_API_MODULE(CMAKEJS_ADDON_NAME, Init) // (name to use, initializer to use)
 
 } // namespace NAPI_CPP_CUSTOM_NAMESPACE
+} // namespace Napi
+
+// Export our custom namespace to outside of the Napi namespace, e.g., 'addon::'
+namespace CMAKEJS_ADDON_NAME {
+  using namespace Napi::NAPI_CPP_CUSTOM_NAMESPACE;
+}
 
 #else
  #warning "Warning: Cannot find '<napi.h>' - try running 'npm -g install cmake-js'..."
