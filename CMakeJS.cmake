@@ -255,14 +255,14 @@ resolved, for Addon targets to link with.
 (This should be expanded to contain most of cmake-js globally-required
 configuration)
 #]=============================================================================]
-add_library(cmake-js-base INTERFACE)
-add_library(cmake-js::base ALIAS cmake-js-base)
-target_include_directories(cmake-js-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
-target_sources(cmake-js-base INTERFACE ${CMAKE_JS_SRC})
-target_link_libraries(cmake-js-base INTERFACE "${CMAKE_JS_LIB}")
-target_compile_definitions(cmake-js-base INTERFACE "BUILDING_NODE_EXTENSION")
+add_library                 (cmake-js-addon-base INTERFACE)
+add_library                 (cmake-js::addon-base ALIAS cmake-js-addon-base)
+target_include_directories  (cmake-js-addon-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
+target_sources              (cmake-js-addon-base INTERFACE ${CMAKE_JS_SRC})
+target_link_libraries       (cmake-js-addon-base INTERFACE "${CMAKE_JS_LIB}")
+target_compile_definitions  (cmake-js-addon-base INTERFACE "BUILDING_NODE_EXTENSION")
 # Signal a basic C++11 feature to require C++11.
-target_compile_features(cmake-js-base INTERFACE cxx_nullptr)
+target_compile_features     (cmake-js-addon-base INTERFACE cxx_nullptr)
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "Select the MSVC runtime library for use by compilers targeting the MSVC ABI." FORCE)
     if(CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
@@ -338,7 +338,7 @@ function(cmakejs_create_napi_addon name)
     add_library(${name} SHARED)
     add_library(${name_alt} ALIAS ${name})
 
-    target_link_libraries(${name} cmake-js::base)
+    target_link_libraries(${name} cmake-js::addon-base)
 
     set_property(
       TARGET ${name}
