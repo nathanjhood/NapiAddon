@@ -202,3 +202,4 @@ src/noderc/lib.cpp
 src/noderc/intermediate
 
 _CPack_Packages
+!.npmrc
