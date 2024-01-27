@@ -9,8 +9,8 @@
 #include <napi.h>
 
 #ifndef STRINGIFY
-# define STRINGIFY(n) STRINGIFY_HELPER(n)
 # define STRINGIFY_HELPER(n) #n
+# define STRINGIFY(n) STRINGIFY_HELPER(n)
 #endif
 
 #if __cplusplus >= 201703L
