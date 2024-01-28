@@ -398,6 +398,7 @@ Add source files to an existing Napi Addon target.
 
 cmakejs_napi_addon_add_sources(<name> [items1...])
 cmakejs_napi_addon_add_sources(<name> [BASE_DIRS <dirs>] [items1...])
+cmakejs_napi_addon_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
 #]=============================================================================]
 function(cmakejs_napi_addon_add_sources name)
 
@@ -410,7 +411,7 @@ function(cmakejs_napi_addon_add_sources name)
 
     set(options)
     set(args BASE_DIRS)
-    set(list_args)
+    set(list_args INTERFACE PRIVATE PUBLIC)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
     if(NOT ARG_BASE_DIRS)
@@ -435,7 +436,27 @@ function(cmakejs_napi_addon_add_sources name)
             continue()
         endif()
 
-        target_sources(${name} PRIVATE "${abs_in}")
+        if(DEFINED ARG_INTERFACE)
+            foreach(item IN LISTS ARG_INTERFACE)
+                target_sources(${name} INTERFACE "${abs_in}")
+            endforeach()
+        endif()
+
+        if(DEFINED ARG_PRIVATE)
+            foreach(item IN LISTS ARG_PRIVATE)
+                target_sources(${name} PRIVATE "${abs_in}")
+            endforeach()
+        endif()
+
+        if(DEFINED ARG_PUBLIC)
+            foreach(item IN LISTS ARG_PUBLIC)
+                target_sources(${name} PUBLIC "${abs_in}")
+            endforeach()
+        endif()
+
+        foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+            target_sources(${name} PRIVATE "${abs_in}")
+        endforeach()
 
     endforeach()
 
