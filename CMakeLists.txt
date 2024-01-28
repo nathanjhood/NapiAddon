@@ -47,13 +47,13 @@ cmakejs_create_napi_addon (addon_v7
 )
 
 cmakejs_napi_addon_add_sources (addon_v7
-  # SOURCES
+  # Specify an exact directory for this addon's SOURCES
   BASE_DIRS "${PROJECT_SOURCE_DIR}/src/demo"
   src/demo/addon.cpp
 )
 
 cmakejs_napi_addon_add_definitions (addon_v7
-  # 'PUBLIC' and 'INTERFACE' definitions are also supported.
+  # 'PRIVATE', 'PUBLIC', and 'INTERFACE' definitions are all supported.
   PRIVATE
   # See '<Napi.h>' for the default exceptions policy handling. Can be specified here.
   NAPI_CPP_EXCEPTIONS_MAYBE
