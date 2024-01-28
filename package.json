@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start":                "node ./test/index.js",
-    "test":                 "cd build && ctest -C Release --rerun-failed --output-on-failure",
+    "test":                 "ctest -B ./build -C Release --rerun-failed --output-on-failure",
 
     "install":              "cmake-js install",
     "postinstall":          "cmake-js compile",
@@ -46,7 +46,7 @@
     "cmake:rebuild":        "cmake --fresh -S . -B ./build && cmake --build ./build",
     "cmake:help":           "cmake --help",
 
-    "ctest":                "cd ./build && ctest",
+    "ctest":                "ctest -B ./build",
     "ctest:help":           "ctest --help",
 
     "cpack:all":            "cpack -B ./build --config ./build/CPackConfig.cmake",
