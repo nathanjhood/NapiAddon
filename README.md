@@ -4,7 +4,7 @@
 
 ![CTest](https://github.com/nathanjhood/NapiAddon/actions/workflows/test.yaml/badge.svg)
 
-The file of interest here is the one named [```CMakeJS.cmake```](https://github.com/nathanjhood/NapiAddon/blob/main/CMakeJS.cmake) - this file is a rough CMake module that builders can include in their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target by using ```cmakejs_create_napi_addon()```, which creates a target with all the reasonable defaults taken care of for building a Napi Addon - but, intermediate/advanced users still have scope to override any of these defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target(s), if they so wish.
+The file of interest here is the one named [```CMakeJS.cmake```](https://github.com/nathanjhood/NapiAddon/blob/main/CMakeJS.cmake) - this file is a CMake module that builders can append to their project's ```CMAKE_MODULE_PATH```, and then easily create a new NodeJS C++ Addon as a CMake target by using ```cmakejs_create_napi_addon()```, which creates a target with all the reasonable defaults taken care of for building a Napi Addon - but, intermediate/advanced users still have scope to override any of these defaults by using the usual ```target_compile_definitions()``` and such forth on their Addon target(s), if they so wish.
 
 The proposed API also does not clash with any pre-existing projects, by not imposing itself on users unless they specifically call the function within their build script. Adoption of this proposed API would be entirely optional, and especially helpful for newcomers.
 
@@ -69,6 +69,20 @@ cmakejs_napi_addon_add_definitions (addon_v7
 )
 ```
 
+## Backwards compatible
+
+Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. Furthermore, the previous 'manual' way of creating addons with cmake-js will still work, and can be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::addon-base``` interface library:
+
+```.cmake
+inlcude(CMakeJS)
+
+add_library(addon_v6 SHARED src/demo/addon.cpp)
+set_target_properties(addon_v6 PROPERTIES PREFIX "" SUFFIX ".node")
+target_link_libraries(addon_v6 cmake-js::addon-base) # link to 'cmake-js::addon-base'
+```
+
+The above target should build, while leaving the rest of the target's implementation up to the builder.
+
 ## Builds with either cmake-js or CMake
 
 All that it takes to compile and run the above minimal build script is to call cmake-js from ```package.json```:
@@ -119,7 +133,7 @@ See [```package.json```](https://github.com/nathanjhood/NapiAddon/blob/main/pack
 
 ## Deeper CMake integration
 
-By exporting an interface library under cmake-js' own namespace, the CMakeJS.cmake file can easily be shipped in the cmake-js package tree, making the NodeJS Addon API automatically available to builders by simply having the cmake-js CLI pass in ```-DCMAKE_MODULE_PATH:PATH=/path/to/CMakeJS.cmake```, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
+By exporting an interface library under cmake-js' own namespace - ```cmake-js::addon-base```, the CMakeJS.cmake file can easily be shipped in the cmake-js package tree, making the NodeJS Addon API automatically available to builders by simply having the cmake-js CLI pass in ```-DCMAKE_MODULE_PATH:PATH=/path/to/CMakeJS.cmake```, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
 
 Builders will also find that their cmake-js - powered Addon targets also work well with CMake's ```export()``` and ```install()``` routines, meaning that their Addon projects also work as CMake modules.
 
