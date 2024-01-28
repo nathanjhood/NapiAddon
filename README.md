@@ -26,7 +26,9 @@ include(CMakeJS)
 
 project (demo)
 
-cmakejs_create_napi_addon(addon
+cmakejs_create_napi_addon(
+  # NAME
+  addon
   # SOURCES
   src/demo/addon.cpp
 )
@@ -42,23 +44,25 @@ The module strives to be unopinionated by providing reasonable fallback behaviou
 Optionally, more Addon targets can be created from this API under one single project tree, and helpful variables may also be configured:
 
 ```.cmake
-cmakejs_create_napi_addon (addon_v7
-  # defines NAPI_VERSION. If not set, defaults to 8.
+cmakejs_create_napi_addon (
+  # The name given to the addon target defines 'CMAKEJS_ADDON_NAME'
+  addon_v7
+  # defines 'NAPI_VERSION' directly. If not set, defaults to 8.
   NAPI_VERSION 7
-  # defines NAPI_CPP_CUSTOM_NAMESPACE. If not set, the addon target name is used instead.
+  # defines 'NAPI_CPP_CUSTOM_NAMESPACE'. If not set, the addon target name is used instead.
   NAMESPACE v7
-  # defines an alias target name. If not set, NAPI_CPP_CUSTOM_NAMESPACE is used instead.
+  # defines an alias target name. If not set, 'NAPI_CPP_CUSTOM_NAMESPACE' is used instead.
   ALIAS addon::v7
 )
 
 cmakejs_napi_addon_add_sources (addon_v7
-  # SOURCES
+  # Specify an exact directory for this addon's SOURCES
   BASE_DIRS "${PROJECT_SOURCE_DIR}/src"
   src/demo/addon.cpp
 )
 
 cmakejs_napi_addon_add_definitions (addon_v7
-  # 'PUBLIC' and 'INTERFACE' definitions are also supported.
+  # 'PRIVATE', 'PUBLIC', and 'INTERFACE' definitions are all supported.
   PRIVATE
   # See '<Napi.h>' for the default exceptions policy handling. Can be specified here.
   NAPI_CPP_EXCEPTIONS_MAYBE
