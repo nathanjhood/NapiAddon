@@ -437,6 +437,8 @@ function(cmakejs_napi_addon_add_sources name)
             continue()
         endif()
 
+        source_group("${name}" FILES "${abs_in}")
+
         if(DEFINED ARG_INTERFACE)
             foreach(item IN LISTS ARG_INTERFACE)
                 target_sources(${name} INTERFACE "${abs_in}")
