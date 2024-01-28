@@ -8,6 +8,8 @@ The file of interest here is the one named [```CMakeJS.cmake```](https://github.
 
 The proposed API also does not clash with any pre-existing projects, by not imposing itself on users unless they specifically call the function within their build script. Adoption of this proposed API would be entirely optional, and especially helpful for newcomers.
 
+```CMakeJS.cmake``` is fully compatible with the latest cmake-js release without any changes to source.
+
 ## Minimal setup
 
 Builders are able to get Addons to compile and run using a very minimal CMake build script:
@@ -93,7 +95,9 @@ $ cd ./build
 $ ctest
 
 # addon tests output...
+```
 
+```.sh
 $ cpack
 
 # doing zip/tar of addon build....
@@ -113,7 +117,7 @@ Builders will also find that their cmake-js - powered Addon targets also work we
 
 ```CMakeJS.cmake``` as presented is rough/unrefined and missing several features it would be worth looking closer at (although quickly improving), but already presents a working UX proposal.
 
-```CMakeJS.cmake``` has been built against the latest releases of cmake-js and CMake, and tested against several LTS versions of NodeJS. No changes have been made to any of the existing source code for any other project; the API proposal is entirely contained within ```CMakeJS.cmake```.
+```CMakeJS.cmake``` has been built against the latest releases of cmake-js and CMake, and tested against several LTS versions of NodeJS. No changes have been made to any of the existing source code for any other project; the API proposal is entirely contained within ```CMakeJS.cmake``` as a drop-in solution for building addons.
 
 ## About the demo project
 
@@ -140,9 +144,9 @@ console.log(`Napi Version: ${nathan_napi_addon.version()}`);
 
 ### Some recent Napi Addons of mine
 
-- [nathanjhood/NodeRC](https://github.com/nathanjhood/noderc)
-- [nathanjhood/base64](https://github.com/nathanjhood/base64)
-- [hostconfig/modules](https://github.com/hostconfig/modules)
+- [nathanjhood/NodeRC](https://github.com/nathanjhood/noderc) - CMakeRC as a Napi Addon
+- [nathanjhood/base64](https://github.com/nathanjhood/base64) - An open-source base64 encode/decode tool as a Napi Addon
+- [hostconfig/modules](https://github.com/hostconfig/modules) - HTML content written and compiled in C++ served via Express as a Napi Addon
 
 Thanks for reading!
 
