@@ -36,18 +36,25 @@ cmakejs_create_napi_addon (addon
 # it all works as intended.
 
 cmakejs_create_napi_addon (addon_v7
-  NAPI_VERSION 7 # defines NAPI_VERSION. If not set, defaults to 8.
-  NAMESPACE v7   # defines NAPI_CPP_CUSTOM_NAMESPACE. If not set, the addon target name is used instead.
+  # defines NAPI_VERSION. If not set, defaults to 8.
+  NAPI_VERSION 7
+  # defines NAPI_CPP_CUSTOM_NAMESPACE. If not set, the addon target name is used instead.
+  NAMESPACE v7
+  # defines an alias target name. If not set, NAPI_CPP_CUSTOM_NAMESPACE is used instead.
+  ALIAS addon::v7
 )
 
 cmakejs_napi_addon_add_sources (addon_v7
   # SOURCES
+  BASE_DIRS "${PROJECT_SOURCE_DIR}/src"
   src/demo/addon.cpp
 )
 
 cmakejs_napi_addon_add_definitions (addon_v7
+  # 'PUBLIC' and 'INTERFACE' definitions are also supported.
   PRIVATE
-  NAPI_CPP_EXCEPTIONS_MAYBE # See '<Napi.h>' for the default exceptions policy handling. Can be specified here.
+  # See '<Napi.h>' for the default exceptions policy handling. Can be specified here.
+  NAPI_CPP_EXCEPTIONS_MAYBE
 )
 
 #[===================[
