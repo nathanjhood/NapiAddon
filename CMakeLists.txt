@@ -19,7 +19,9 @@ project (demo VERSION 1.0.0)
 # make sure namespaces, directory/file pathnames,
 # and names of targets are matching.
 
-cmakejs_create_napi_addon (addon
+cmakejs_create_napi_addon (
+  # NAME
+  addon
   # SOURCES
   src/demo/addon.cpp
 )
@@ -46,7 +48,7 @@ cmakejs_create_napi_addon (addon_v7
 
 cmakejs_napi_addon_add_sources (addon_v7
   # SOURCES
-  BASE_DIRS "${PROJECT_SOURCE_DIR}/src"
+  BASE_DIRS "${PROJECT_SOURCE_DIR}/src/demo"
   src/demo/addon.cpp
 )
 
