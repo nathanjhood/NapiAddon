@@ -398,6 +398,7 @@ Add source files to an existing Napi Addon target.
 
 cmakejs_napi_addon_add_sources(<name> [items1...])
 cmakejs_napi_addon_add_sources(<name> [BASE_DIRS <dirs>] [items1...])
+cmakejs_napi_addon_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
 cmakejs_napi_addon_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
 #]=============================================================================]
 function(cmakejs_napi_addon_add_sources name)
