@@ -74,7 +74,7 @@ cmakejs_napi_addon_add_definitions (addon_v7
 Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. Furthermore, the previous 'manual' way of creating addons with cmake-js will still work, and can be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::addon-base``` interface library:
 
 ```.cmake
-inlcude(CMakeJS)
+include(CMakeJS)
 
 add_library(addon_v6 SHARED src/demo/addon.cpp)
 set_target_properties(addon_v6 PROPERTIES PREFIX "" SUFFIX ".node")

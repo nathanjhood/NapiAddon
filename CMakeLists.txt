@@ -59,6 +59,15 @@ cmakejs_napi_addon_add_definitions (addon_v7
   NAPI_CPP_EXCEPTIONS_MAYBE
 )
 
+#[=======================[
+# BACKWARDS COMPATIBILITY:
+#]=======================]
+
+add_library(addon_v6 SHARED src/demo/addon.cpp)
+set_target_properties(addon_v6 PROPERTIES PREFIX "" SUFFIX ".node")
+target_link_libraries(addon_v6 cmake-js::addon-base)
+# The above is enough to build an addon manually, thanks to the 'cmake-js::addon-base' link line!
+
 #[===================[
 # TESTING AND PACKING:
 #]===================]
@@ -70,6 +79,7 @@ cmakejs_napi_addon_add_definitions (addon_v7
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/share/cmake/Modules")
 
 if(TRUE)
+  # include(CTest) # If you want to see all the test dashboard targets, uncomment this include()
   enable_testing()
   include("${PROJECT_SOURCE_DIR}/test/tests.cmake")
   include(ExportNapiAddon)
