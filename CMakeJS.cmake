@@ -380,9 +380,13 @@ function(cmakejs_create_napi_addon name)
     cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
 
     cmakejs_napi_addon_add_definitions(${name}
-      PUBLIC
+      PRIVATE # These two definitions only belong to this unique target
       "CMAKEJS_ADDON_NAME=${name}"
       "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
+    )
+
+    cmakejs_napi_addon_add_definitions(${name}
+      PUBLIC # These definitions are shared with anything that links to this addon
       "NAPI_VERSION=${ARG_NAPI_VERSION}"
       "BUILDING_NODE_EXTENSION"
     )
