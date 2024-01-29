@@ -218,10 +218,11 @@ function(cmakejs_acquire_napi_c_files)
       OUTPUT_VARIABLE NODE_API_HEADERS_DIR
       COMMAND_ERROR_IS_FATAL ANY
     )
-    string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR ${NODE_API_HEADERS_DIR})
+    string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}")
     set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
 
     file(GLOB NODE_API_INC_FILES "${NODE_API_HEADERS_DIR}/*.h")
+    set(NODE_API_INC_FILES "${NODE_API_INC_FILES}" CACHE FILEPATH "Node API Header files." FORCE)
     source_group("Node Addon API (C)" FILES "${NODE_API_INC_FILES}")
 
     if(VERBOSE)
@@ -249,6 +250,7 @@ function(cmakejs_acquire_napi_cpp_files)
     set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
 
     file(GLOB NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_DIR}/*.h")
+    set(NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_INC_FILES}" CACHE FILEPATH "Node Addon API Header files." FORCE)
     source_group("Node Addon API (C++)" FILES "${NODE_ADDON_API_INC_FILES}")
 
     if(VERBOSE)
@@ -269,14 +271,27 @@ resolved, for Addon targets to link with.
 (This should be expanded to contain most of cmake-js globally-required
 configuration)
 #]=============================================================================]
-add_library                 (cmake-js-addon-base INTERFACE)
-add_library                 (cmake-js::addon-base ALIAS cmake-js-addon-base)
-target_include_directories  (cmake-js-addon-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
-target_sources              (cmake-js-addon-base INTERFACE "${CMAKE_JS_SRC}")
-target_link_libraries       (cmake-js-addon-base INTERFACE "${CMAKE_JS_LIB}")
-target_compile_definitions  (cmake-js-addon-base INTERFACE "BUILDING_NODE_EXTENSION")
-# Signal a basic C++11 feature to require C++11.
-target_compile_features     (cmake-js-addon-base INTERFACE cxx_nullptr)
+
+# cmake-js::node-api
+add_library                 (node-api INTERFACE)
+add_library                 (cmake-js::node-api ALIAS node-api)
+target_include_directories  (node-api INTERFACE "${NODE_API_INC_FILES}")
+
+# cmake-js::node-addon-api
+add_library                 (node-addon-api INTERFACE)
+add_library                 (cmake-js::node-addon-api ALIAS node-api)
+target_include_directories  (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILES}")
+
+# cmake-js::cmake-js
+add_library                 (cmake-js INTERFACE)
+add_library                 (cmake-js::cmake-js ALIAS cmake-js)
+target_include_directories  (cmake-js INTERFACE "${CMAKE_JS_INC}")
+target_sources              (cmake-js INTERFACE "${CMAKE_JS_SRC}")
+target_link_libraries       (cmake-js INTERFACE "${CMAKE_JS_LIB}" cmake-js::node-api cmake-js::node-addon-api)
+target_compile_definitions  (cmake-js INTERFACE "BUILDING_NODE_EXTENSION")
+target_compile_features     (cmake-js INTERFACE cxx_nullptr) # Signal a basic C++11 feature to require C++11.
+
+# Generate definitions
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "Select the MSVC runtime library for use by compilers targeting the MSVC ABI." FORCE)
     if(CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
@@ -352,7 +367,7 @@ function(cmakejs_create_napi_addon name)
     add_library(${name} SHARED)
     add_library(${name_alt}::${name} ALIAS ${name})
 
-    target_link_libraries(${name} PRIVATE cmake-js::addon-base)
+    target_link_libraries(${name} PRIVATE cmake-js::cmake-js)
 
     set_property(
       TARGET ${name}
@@ -513,3 +528,9 @@ function(cmakejs_napi_addon_add_definitions name)
     endforeach()
 
 endfunction()
+
+export (
+  TARGETS node-api node-addon-api cmake-js
+  FILE share/cmake/cmakejs_targets.cmake
+  NAMESPACE cmake-js::
+)
