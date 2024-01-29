@@ -45,13 +45,13 @@ Optionally, more Addon targets can be created from this API under one single pro
 
 ```.cmake
 cmakejs_create_napi_addon (
-  # The name given to the addon target defines 'CMAKEJS_ADDON_NAME'
+  # The 'NAME' arg given to the addon target defines 'CMAKEJS_ADDON_NAME'
   addon_v7
-  # defines 'NAPI_VERSION' directly. If not set, defaults to 8.
+  # The 'NAPI_VERSION' arg defines 'NAPI_VERSION' directly. If not set, defaults to 8.
   NAPI_VERSION 7
-  # defines 'NAPI_CPP_CUSTOM_NAMESPACE'. If not set, the addon target name is used instead.
+  # The 'NAMESPACE' arg defines 'NAPI_CPP_CUSTOM_NAMESPACE'. If not set, the addon target name is used instead.
   NAMESPACE v7
-  # defines 'CMAKEJS_ADDON_ALIAS' for an alias target name. If not set, 'NAPI_CPP_CUSTOM_NAMESPACE' is used instead.
+  # The 'ALIAS' arg defines 'CMAKEJS_ADDON_ALIAS' for an alias target name. If not set, 'NAPI_CPP_CUSTOM_NAMESPACE' is used instead.
   ALIAS addon::v7
 )
 
@@ -64,8 +64,10 @@ cmakejs_napi_addon_add_sources (addon_v7
 cmakejs_napi_addon_add_definitions (addon_v7
   # 'PRIVATE', 'PUBLIC', and 'INTERFACE' definitions are all supported.
   PRIVATE
-  # See '<Napi.h>' for the default exceptions policy handling. Can be specified here.
+  # The Napi Addon API has several other useful pre-processor definitions.
+  # These can be specified here. Example:
   NAPI_CPP_EXCEPTIONS_MAYBE
+  # (See '<Napi.h>' source file for the default exceptions policy handling.)
 )
 ```
 
