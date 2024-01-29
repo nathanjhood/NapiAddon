@@ -64,11 +64,13 @@ This module defines
 
 #]=======================================================================]
 
-# CMAKE_JS_INC is defined on all platforms when calling from cmake-js.
+# CMAKE_JS_VERSION is defined on all platforms when calling from cmake-js.
 # By checking whether this var is pre-defined, we can determine if we are
 # running from an npm script (via cmake-js), or from CMake directly...
 
-if (NOT DEFINED CMAKE_JS_INC)
+# TODO: Unfortunately, this var is a little too close to 'CMAKE_VERSION'
+# for comfort... Kitware may need it. Should be moved into 'CMAKEJS_VERSION'!
+if (NOT DEFINED CMAKE_JS_VERSION)
 
     # ...and if we're calling from CMake directly, we need to set up some vars
     # that our build step depends on (these are predefined when calling via npm/cmake-js).
@@ -199,7 +201,7 @@ endif()
 # Resolve NodeJS development headers
 # TODO: This code block is quite problematic, since:
 # 1 - it might trigger a build run, depending on how the builder has set up their package.json scripts...
-# 2 X it also currently assumes a preference for yarn over npm (and the others)...
+# 2 - it also currently assumes a preference for yarn over npm (and the others)...
 # 3 - finally, because of how cmake-js works, it might create Ninja-build artefacts,
 # even when the CMake user specifies a different generator to CMake manually...
 if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
