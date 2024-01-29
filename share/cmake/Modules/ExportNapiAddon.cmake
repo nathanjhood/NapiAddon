@@ -9,8 +9,8 @@ file(COPY
   "${PROJECT_BINARY_DIR}/lib"
 )
 
-# Make a list of targets to export (cmake-js-base is required)
-list(APPEND TARGETS addon addon_v7 cmake-js-addon-base)
+# Make a list of targets to export (cmake-js-base is resolved)
+list(APPEND TARGETS addon addon_v7)
 
 # Collect and export targets
 set (${PROJECT_NAME}_TARGETS "${TARGETS}" CACHE STRING "Targets to be built." FORCE)
