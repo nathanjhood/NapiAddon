@@ -17,7 +17,7 @@ Builders are able to get Addons to compile and run using a very minimal CMake bu
 ```.cmake
 # CMakeLists.txt
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 # path to CMakeJS.cmake
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
@@ -74,7 +74,7 @@ cmakejs_napi_addon_add_definitions (addon_v7
 Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. So, the previous 'manual' way of creating addons with cmake-js will still work, and can even be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::cmake-js``` interface library:
 
 ```.cmake
-# including the module will automatically make 'cmake-js::addon-base' available...
+# including the module will automatically make 'cmake-js::cmake-js' available...
 include(CMakeJS)
 
 add_library(addon_v6 SHARED src/demo/addon.cpp)
@@ -134,9 +134,18 @@ See [```package.json```](https://github.com/nathanjhood/NapiAddon/blob/main/pack
 
 ## Deeper CMake integration
 
-By exporting an interface library under cmake-js' own namespace - ```cmake-js::addon-base```, the CMakeJS.cmake file can easily be shipped in the cmake-js package tree, making the NodeJS Addon API automatically available to builders by simply having the cmake-js CLI pass in ```-DCMAKE_MODULE_PATH:PATH=/path/to/CMakeJS.cmake```, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
+By exporting an interface library under cmake-js' own namespace - ```cmake-js::cmake-js```, the CMakeJS.cmake file can easily be shipped in the cmake-js package tree, making the NodeJS Addon API automatically available to builders by simply having the cmake-js CLI pass in ```-DCMAKE_MODULE_PATH:PATH=/path/to/CMakeJS.cmake```, as well as providing the usual/expected means of integration with vcpkg, and other conventional CMake module consumers.
 
 Builders will also find that their cmake-js - powered Addon targets also work well with CMake's ```export()``` and ```install()``` routines, meaning that their Addon projects also work as CMake modules.
+
+```CMakeJS.cmake``` exports the following CMake targets for linkage options:
+
+```
+cmake-js::node-dev        // The NodeJS system installation developer files
+cmake-js::node-api        // The C Addon API
+cmake-js::node-addon-api  // The C++ Addon API
+cmake-js::cmake-js        // The full set of configured Addon API dependencies
+```
 
 ## Intentions
 
