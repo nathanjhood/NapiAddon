@@ -71,9 +71,10 @@ cmakejs_napi_addon_add_definitions (addon_v7
 
 ## Backwards compatible
 
-Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. Furthermore, the previous 'manual' way of creating addons with cmake-js will still work, and can be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::addon-base``` interface library:
+Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. So, the previous 'manual' way of creating addons with cmake-js will still work, and can even be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::addon-base``` interface library:
 
 ```.cmake
+# including the module will automatically make 'cmake-js::addon-base' available...
 include(CMakeJS)
 
 add_library(addon_v6 SHARED src/demo/addon.cpp)
@@ -81,7 +82,7 @@ set_target_properties(addon_v6 PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(addon_v6 cmake-js::addon-base) # link to 'cmake-js::addon-base'
 ```
 
-The above target should build, while leaving the rest of the target's implementation up to the builder.
+The above target should build, while leaving the rest of the target's manual implementation up to the builder.
 
 ## Builds with either cmake-js or CMake
 
@@ -162,7 +163,7 @@ The demo addon is then acquirable in your demo NodeJS project as you would expec
 ```.js
 const nathan_napi_addon = require("@nathanjhood/napi-addon")
 
-console.log(nathan_napi_addon.hello());
+console.log(`Napi Status:  ${nathan_napi_addon.hello()}`);
 console.log(`Napi Version: ${nathan_napi_addon.version()}`);
 ```
 
