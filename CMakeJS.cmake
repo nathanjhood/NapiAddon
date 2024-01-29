@@ -17,7 +17,6 @@ if(COMMAND cmakejs_napi_addon_add_sources)
 endif()
 
 set(_CMAKEJS_VERSION "${_version}" CACHE INTERNAL "CMakeJS version. Used for checking for conflicts")
-unset(_version)
 
 set(_CMAKEJS_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to 'CMakeJS.cmake' script")
 
@@ -289,7 +288,10 @@ add_library                 (cmake-js INTERFACE)
 add_library                 (cmake-js::cmake-js ALIAS cmake-js)
 target_include_directories  (cmake-js INTERFACE "${CMAKE_JS_INC}")
 target_sources              (cmake-js INTERFACE "${CMAKE_JS_SRC}")
-target_link_libraries       (cmake-js INTERFACE "${CMAKE_JS_LIB}" cmake-js::node-api cmake-js::node-addon-api)
+target_sources              (cmake-js INTERFACE "${CMAKE_JS_INC_FILES}")
+target_link_libraries       (cmake-js INTERFACE "${CMAKE_JS_LIB}")
+target_link_libraries       (cmake-js INTERFACE cmake-js::node-api)
+target_link_libraries       (cmake-js INTERFACE cmake-js::node-addon-api)
 target_compile_definitions  (cmake-js INTERFACE "BUILDING_NODE_EXTENSION")
 target_compile_features     (cmake-js INTERFACE cxx_nullptr) # Signal a basic C++11 feature to require C++11.
 
@@ -531,8 +533,32 @@ function(cmakejs_napi_addon_add_definitions name)
 
 endfunction()
 
+set (CMAKEJS_TARGETS)
+list (APPEND CMAKEJS_TARGETS
+  node-api
+  node-addon-api
+  cmake-js
+)
+
 export (
-  TARGETS node-api node-addon-api cmake-js
-  FILE share/cmake/cmakejs_targets.cmake
+  TARGETS ${CMAKEJS_TARGETS}
+  FILE share/cmake/CMakeJSTargets.cmake
   NAMESPACE cmake-js::
 )
+
+include (CMakePackageConfigHelpers)
+# generate the version file for the cmake config file
+write_basic_package_version_file (
+	share/cmake/CMakeJSConfigVersion.cmake
+	VERSION ${_version}
+	COMPATIBILITY AnyNewerVersion
+)
+
+unset(_version)
+
+# TODO: These vars are not very namespace friendly!
+unset (CMAKE_JS_SRC)
+unset (CMAKE_JS_INC)
+unset (CMAKE_JS_LIB)
+unset (CMAKE_JS_VERSION)
+unset (CMAKE_JS_EXECUTABLE)
