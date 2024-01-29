@@ -1,4 +1,11 @@
 #[=============================================================================[
+  CMakeJS.cmake - A proposed CMake API for cmake-js v8
+  Copyright (C) 2024 Nathan J. Hood
+  MIT License
+  See: https://github.com/nathanjhood/NapiAddon
+#]=============================================================================]
+
+#[=============================================================================[
   Check whether we have already been included (borrowed from CMakeRC)
 #]=============================================================================]
 # Hypothetical CMakeJS version number...
