@@ -65,8 +65,9 @@ cmakejs_napi_addon_add_definitions (addon_v7
 
 add_library(addon_v6 SHARED src/demo/addon.cpp)
 set_target_properties(addon_v6 PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(addon_v6 cmake-js::addon-base)
-# The above is enough to build an addon manually, thanks to the 'cmake-js::addon-base' link line!
+target_link_libraries(addon_v6 PRIVATE cmake-js::cmake-js)
+# The above is enough to build an addon manually, thanks to the 'cmake-js::cmake-js' link line!
+# The API also provides both 'cmake-js::node-api' and 'cmake-js::node-addon-api'.
 
 #[===================[
 # TESTING AND PACKING:
