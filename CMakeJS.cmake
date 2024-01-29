@@ -352,7 +352,7 @@ function(cmakejs_create_napi_addon name)
     add_library(${name} SHARED)
     add_library(${name_alt}::${name} ALIAS ${name})
 
-    target_link_libraries(${name} cmake-js::addon-base)
+    target_link_libraries(${name} PRIVATE cmake-js::addon-base)
 
     set_property(
       TARGET ${name}
