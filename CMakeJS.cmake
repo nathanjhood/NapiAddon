@@ -362,7 +362,7 @@ function(cmakejs_create_napi_addon name)
     set_target_properties(${name}
       PROPERTIES
 
-      LIBRARY_OUTPUT_NAME "${name_alt}"
+      LIBRARY_OUTPUT_NAME "${name}"
       PREFIX ""
       SUFFIX ".node"
 
