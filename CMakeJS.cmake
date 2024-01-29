@@ -280,7 +280,7 @@ target_sources              (node-api INTERFACE "${NODE_API_INC_FILES}")
 
 # cmake-js::node-addon-api
 add_library                 (node-addon-api INTERFACE)
-add_library                 (cmake-js::node-addon-api ALIAS node-api)
+add_library                 (cmake-js::node-addon-api ALIAS node-addon-api)
 target_include_directories  (node-addon-api INTERFACE "${NODE_ADDON_API_DIR}")
 target_sources              (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILES}")
 
