@@ -182,6 +182,10 @@ console.log(`Napi Version: ${nathan_napi_addon.version()}`);
 - [nathanjhood/base64](https://github.com/nathanjhood/base64) - An open-source base64 encode/decode tool as a Napi Addon
 - [hostconfig/modules](https://github.com/hostconfig/modules) - HTML content written and compiled in C++ served via Express as a Napi Addon
 
+### Here is one using ```CMakeJS.cmake```'s targets and functions, alongside native CMake targets, in a single project.
+
+- [nathanjhood/njwt](https://github.com/nathanjhood/njwt) - JWT tool - under construction
+
 Thanks for reading!
 
 [Nathan J. Hood](https://github.com/nathanjhood)
