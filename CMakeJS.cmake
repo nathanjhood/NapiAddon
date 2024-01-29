@@ -152,6 +152,7 @@ else ()
 
 endif ()
 
+unset(CMAKE_JS_INC_FILES) # prevent repetitive globbing on each run
 file(GLOB CMAKE_JS_INC_FILES "${CMAKE_JS_INC}/*.h")
 file(GLOB CMAKE_JS_INC_FILES "${CMAKE_JS_INC}/**/*.h")
 source_group("cmake-js v${_version} Node ${NODE_VERSION}" FILES "${CMAKE_JS_INC_FILES}")
@@ -229,6 +230,7 @@ function(cmakejs_acquire_napi_c_files)
     string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}")
     set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
 
+    unset(NODE_API_INC_FILES)
     file(GLOB NODE_API_INC_FILES "${NODE_API_HEADERS_DIR}/*.h")
     set(NODE_API_INC_FILES "${NODE_API_INC_FILES}" CACHE FILEPATH "Node API Header files." FORCE)
     source_group("Node Addon API (C)" FILES "${NODE_API_INC_FILES}")
@@ -242,6 +244,11 @@ endfunction()
 if(NOT DEFINED NODE_API_HEADERS_DIR)
     cmakejs_acquire_napi_c_files()
     message(STATUS "NODE_API_HEADERS_DIR: ${NODE_API_HEADERS_DIR}")
+endif()
+if(NOT DEFINED NODE_API_INC_FILES)
+    file(GLOB NODE_API_INC_FILES "${NODE_API_HEADERS_DIR}/*.h")
+    set(NODE_API_INC_FILES "${NODE_API_INC_FILES}" CACHE FILEPATH "Node API Header files." FORCE)
+    source_group("Node Addon API (C)" FILES "${NODE_API_INC_FILES}")
 endif()
 
 #[=============================================================================[
@@ -257,6 +264,7 @@ function(cmakejs_acquire_napi_cpp_files)
     string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}")
     set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
 
+    unset(NODE_ADDON_API_INC_FILES)
     file(GLOB NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_DIR}/*.h")
     set(NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_INC_FILES}" CACHE FILEPATH "Node Addon API Header files." FORCE)
     source_group("Node Addon API (C++)" FILES "${NODE_ADDON_API_INC_FILES}")
@@ -270,6 +278,11 @@ endfunction()
 if(NOT DEFINED NODE_ADDON_API_DIR)
     cmakejs_acquire_napi_cpp_files()
     message(STATUS "NODE_ADDON_API_DIR: ${NODE_ADDON_API_DIR}")
+endif()
+if(NOT DEFINED NODE_ADDON_API_INC_FILES)
+    file(GLOB NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_DIR}/*.h")
+    set(NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_INC_FILES}" CACHE FILEPATH "Node Addon API Header files." FORCE)
+    source_group("Node Addon API (C++)" FILES "${NODE_ADDON_API_INC_FILES}")
 endif()
 
 #[=============================================================================[
