@@ -271,6 +271,14 @@ resolved, for Addon targets to link with.
 configuration)
 #]=============================================================================]
 
+# cmake-js::node-dev
+add_library                 (node-dev INTERFACE)
+add_library                 (cmake-js::node-dev ALIAS node-dev)
+target_include_directories  (node-dev INTERFACE "${CMAKE_JS_INC}")
+target_sources              (node-dev INTERFACE "${CMAKE_JS_SRC}")
+target_sources              (node-dev INTERFACE "${CMAKE_JS_INC_FILES}")
+target_link_libraries       (node-dev INTERFACE "${CMAKE_JS_LIB}")
+
 # cmake-js::node-api
 add_library                 (node-api INTERFACE)
 add_library                 (cmake-js::node-api ALIAS node-api)
@@ -286,10 +294,7 @@ target_sources              (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILE
 # cmake-js::cmake-js
 add_library                 (cmake-js INTERFACE)
 add_library                 (cmake-js::cmake-js ALIAS cmake-js)
-target_include_directories  (cmake-js INTERFACE "${CMAKE_JS_INC}")
-target_sources              (cmake-js INTERFACE "${CMAKE_JS_SRC}")
-target_sources              (cmake-js INTERFACE "${CMAKE_JS_INC_FILES}")
-target_link_libraries       (cmake-js INTERFACE "${CMAKE_JS_LIB}")
+target_link_libraries       (cmake-js INTERFACE cmake-js::node-dev)
 target_link_libraries       (cmake-js INTERFACE cmake-js::node-api)
 target_link_libraries       (cmake-js INTERFACE cmake-js::node-addon-api)
 target_compile_definitions  (cmake-js INTERFACE "BUILDING_NODE_EXTENSION")
@@ -535,6 +540,7 @@ endfunction()
 
 set (CMAKEJS_TARGETS)
 list (APPEND CMAKEJS_TARGETS
+  node-dev
   node-api
   node-addon-api
   cmake-js

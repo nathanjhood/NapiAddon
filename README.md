@@ -141,9 +141,10 @@ Builders will also find that their cmake-js - powered Addon targets also work we
 ```CMakeJS.cmake``` exports the following CMake targets for linkage options:
 
 ```
-cmake-js::node-api        // The C API
-cmake-js::node-addon-api  // The C++ API
-cmake-js::cmake-js        // The full set of dependencies
+cmake-js::node-dev        // The NodeJS system installation developer files
+cmake-js::node-api        // The C Addon API
+cmake-js::node-addon-api  // The C++ Addon API
+cmake-js::cmake-js        // The full set of configured Addon API dependencies
 ```
 
 ## Intentions
