@@ -340,7 +340,7 @@ function(cmakejs_create_napi_addon name)
     if(ARG_ALIAS)
         set(name_alt "${ARG_ALIAS}")
     else()
-        set(name_alt "${ARG_NAMESPACE}::${name}")
+        set(name_alt "${ARG_NAMESPACE}")
     endif()
 
     if(VERBOSE)
@@ -350,7 +350,7 @@ function(cmakejs_create_napi_addon name)
     # Begin a new Napi Addon target
 
     add_library(${name} SHARED)
-    add_library(${name_alt} ALIAS ${name})
+    add_library(${name_alt}::${name} ALIAS ${name})
 
     target_link_libraries(${name} cmake-js::addon-base)
 
@@ -382,6 +382,7 @@ function(cmakejs_create_napi_addon name)
     cmakejs_napi_addon_add_definitions(${name}
       PRIVATE # These two definitions only belong to this unique target
       "CMAKEJS_ADDON_NAME=${name}"
+      "CMAKEJS_ADDON_ALIAS=${name_alt}"
       "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
     )
 
