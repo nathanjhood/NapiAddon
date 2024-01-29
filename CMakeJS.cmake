@@ -267,10 +267,18 @@ endif()
 Silently create an interface library (no output) with all Addon API dependencies
 resolved, for Addon targets to link with.
 
-(This should be expanded to contain most of cmake-js globally-required
-configuration)
+(This should contain most of cmake-js globally-required configuration)
+
+Targets:
+
+cmake-js::node-dev
+cmake-js::node-api
+cmake-js::node-addon-api
+cmake-js::cmake-js
+
 #]=============================================================================]
 
+# NodeJS system installation headers
 # cmake-js::node-dev
 add_library                 (node-dev INTERFACE)
 add_library                 (cmake-js::node-dev ALIAS node-dev)
@@ -279,23 +287,26 @@ target_sources              (node-dev INTERFACE "${CMAKE_JS_SRC}")
 target_sources              (node-dev INTERFACE "${CMAKE_JS_INC_FILES}")
 target_link_libraries       (node-dev INTERFACE "${CMAKE_JS_LIB}")
 
+# Node API (C) - requires NodeJS system installation headers
 # cmake-js::node-api
 add_library                 (node-api INTERFACE)
 add_library                 (cmake-js::node-api ALIAS node-api)
 target_include_directories  (node-api INTERFACE "${NODE_API_HEADERS_DIR}")
 target_sources              (node-api INTERFACE "${NODE_API_INC_FILES}")
+target_link_libraries       (node-api INTERFACE cmake-js::node-dev)
 
+# Node Addon API (C++) - requires Node API (C)
 # cmake-js::node-addon-api
 add_library                 (node-addon-api INTERFACE)
 add_library                 (cmake-js::node-addon-api ALIAS node-addon-api)
 target_include_directories  (node-addon-api INTERFACE "${NODE_ADDON_API_DIR}")
 target_sources              (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILES}")
+target_link_libraries       (node-addon-api INTERFACE cmake-js::node-api)
 
+# CMakeJS API - requires Node Addon API (C++), resolves the full Napi Addon dependency chain
 # cmake-js::cmake-js
 add_library                 (cmake-js INTERFACE)
 add_library                 (cmake-js::cmake-js ALIAS cmake-js)
-target_link_libraries       (cmake-js INTERFACE cmake-js::node-dev)
-target_link_libraries       (cmake-js INTERFACE cmake-js::node-api)
 target_link_libraries       (cmake-js INTERFACE cmake-js::node-addon-api)
 target_compile_definitions  (cmake-js INTERFACE "BUILDING_NODE_EXTENSION")
 target_compile_features     (cmake-js INTERFACE cxx_nullptr) # Signal a basic C++11 feature to require C++11.
