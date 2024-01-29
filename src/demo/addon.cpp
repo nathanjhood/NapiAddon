@@ -56,6 +56,6 @@ namespace CMAKEJS_ADDON_NAME {
   using namespace Napi::NAPI_CPP_CUSTOM_NAMESPACE;
 }
 
-#else
+#else // !__has_include(<napi.h>) || !BUILDING_NODE_EXTENSION
  #warning "Warning: Cannot find '<napi.h>' - try running 'npm -g install cmake-js'..."
-#endif // __has_include(<napi.h>) && BUILDING_NODE_EXTENSION
+#endif
