@@ -539,14 +539,28 @@ list (APPEND CMAKEJS_TARGETS
   node-addon-api
   cmake-js
 )
-
 export (
   TARGETS ${CMAKEJS_TARGETS}
   FILE share/cmake/CMakeJSTargets.cmake
   NAMESPACE cmake-js::
 )
 
+
 include (CMakePackageConfigHelpers)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeJSConfig.cmake.in" [==[
+@PACKAGE_INIT@
+
+include(${CMAKE_CURRENT_LIST_DIR}/CMakeJSTargets.cmake)
+
+check_required_components(cmake-js)
+]==])
+# create cmake config file
+configure_package_config_file (
+    "${CMAKE_CURRENT_BINARY_DIR}/CMakeJSConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/CMakeJSConfig.cmake"
+  INSTALL_DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/cmake/CMakeJS"
+)
 # generate the version file for the cmake config file
 write_basic_package_version_file (
 	share/cmake/CMakeJSConfigVersion.cmake
@@ -556,7 +570,7 @@ write_basic_package_version_file (
 
 unset(_version)
 
-# TODO: These vars are not very namespace friendly!
+# These vars are not very namespace friendly!
 unset (CMAKE_JS_SRC)
 unset (CMAKE_JS_INC)
 unset (CMAKE_JS_LIB)
