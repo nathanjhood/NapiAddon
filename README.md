@@ -51,7 +51,7 @@ cmakejs_create_napi_addon (
   NAPI_VERSION 7
   # defines 'NAPI_CPP_CUSTOM_NAMESPACE'. If not set, the addon target name is used instead.
   NAMESPACE v7
-  # defines an alias target name. If not set, 'NAPI_CPP_CUSTOM_NAMESPACE' is used instead.
+  # defines 'CMAKEJS_ADDON_ALIAS' for an alias target name. If not set, 'NAPI_CPP_CUSTOM_NAMESPACE' is used instead.
   ALIAS addon::v7
 )
 
