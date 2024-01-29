@@ -275,12 +275,14 @@ configuration)
 # cmake-js::node-api
 add_library                 (node-api INTERFACE)
 add_library                 (cmake-js::node-api ALIAS node-api)
-target_include_directories  (node-api INTERFACE "${NODE_API_INC_FILES}")
+target_include_directories  (node-api INTERFACE "${NODE_API_HEADERS_DIR}")
+target_sources              (node-api INTERFACE "${NODE_API_INC_FILES}")
 
 # cmake-js::node-addon-api
 add_library                 (node-addon-api INTERFACE)
 add_library                 (cmake-js::node-addon-api ALIAS node-api)
-target_include_directories  (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILES}")
+target_include_directories  (node-addon-api INTERFACE "${NODE_ADDON_API_DIR}")
+target_sources              (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILES}")
 
 # cmake-js::cmake-js
 add_library                 (cmake-js INTERFACE)
