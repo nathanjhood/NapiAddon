@@ -71,7 +71,7 @@ cmakejs_napi_addon_add_definitions (addon_v7
 
 ## Backwards compatible
 
-Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. So, the previous 'manual' way of creating addons with cmake-js will still work, and can even be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::addon-base``` interface library:
+Projects built with cmake-js that don't consume this proposed API would not be affected at all by this module's existence. So, the previous 'manual' way of creating addons with cmake-js will still work, and can even be mixed with targets that use the new API, under the same project tree. Even if the functions are not adopted, builders can still get a little extra help by linking with the ```cmake-js::cmake-js``` interface library:
 
 ```.cmake
 # including the module will automatically make 'cmake-js::addon-base' available...
@@ -79,7 +79,7 @@ include(CMakeJS)
 
 add_library(addon_v6 SHARED src/demo/addon.cpp)
 set_target_properties(addon_v6 PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(addon_v6 cmake-js::addon-base) # link to 'cmake-js::addon-base'
+target_link_libraries(addon_v6 PRIVATE cmake-js::cmake-js) # link to resolve all dependencies!
 ```
 
 The above target should build, while leaving the rest of the target's manual implementation up to the builder.

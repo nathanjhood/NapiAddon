@@ -17,7 +17,6 @@ if(COMMAND cmakejs_napi_addon_add_sources)
 endif()
 
 set(_CMAKEJS_VERSION "${_version}" CACHE INTERNAL "CMakeJS version. Used for checking for conflicts")
-unset(_version)
 
 set(_CMAKEJS_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to 'CMakeJS.cmake' script")
 
@@ -218,10 +217,11 @@ function(cmakejs_acquire_napi_c_files)
       OUTPUT_VARIABLE NODE_API_HEADERS_DIR
       COMMAND_ERROR_IS_FATAL ANY
     )
-    string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR ${NODE_API_HEADERS_DIR})
+    string(REGEX REPLACE "[\r\n\"]" "" NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}")
     set(NODE_API_HEADERS_DIR "${NODE_API_HEADERS_DIR}" CACHE PATH "Node API Headers directory." FORCE)
 
     file(GLOB NODE_API_INC_FILES "${NODE_API_HEADERS_DIR}/*.h")
+    set(NODE_API_INC_FILES "${NODE_API_INC_FILES}" CACHE FILEPATH "Node API Header files." FORCE)
     source_group("Node Addon API (C)" FILES "${NODE_API_INC_FILES}")
 
     if(VERBOSE)
@@ -249,6 +249,7 @@ function(cmakejs_acquire_napi_cpp_files)
     set(NODE_ADDON_API_DIR "${NODE_ADDON_API_DIR}" CACHE PATH "Node Addon API Headers directory." FORCE)
 
     file(GLOB NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_DIR}/*.h")
+    set(NODE_ADDON_API_INC_FILES "${NODE_ADDON_API_INC_FILES}" CACHE FILEPATH "Node Addon API Header files." FORCE)
     source_group("Node Addon API (C++)" FILES "${NODE_ADDON_API_INC_FILES}")
 
     if(VERBOSE)
@@ -269,14 +270,32 @@ resolved, for Addon targets to link with.
 (This should be expanded to contain most of cmake-js globally-required
 configuration)
 #]=============================================================================]
-add_library                 (cmake-js-addon-base INTERFACE)
-add_library                 (cmake-js::addon-base ALIAS cmake-js-addon-base)
-target_include_directories  (cmake-js-addon-base INTERFACE "${CMAKE_JS_INC}" "${NODE_API_HEADERS_DIR}" "${NODE_ADDON_API_DIR}")
-target_sources              (cmake-js-addon-base INTERFACE "${CMAKE_JS_SRC}")
-target_link_libraries       (cmake-js-addon-base INTERFACE "${CMAKE_JS_LIB}")
-target_compile_definitions  (cmake-js-addon-base INTERFACE "BUILDING_NODE_EXTENSION")
-# Signal a basic C++11 feature to require C++11.
-target_compile_features     (cmake-js-addon-base INTERFACE cxx_nullptr)
+
+# cmake-js::node-api
+add_library                 (node-api INTERFACE)
+add_library                 (cmake-js::node-api ALIAS node-api)
+target_include_directories  (node-api INTERFACE "${NODE_API_HEADERS_DIR}")
+target_sources              (node-api INTERFACE "${NODE_API_INC_FILES}")
+
+# cmake-js::node-addon-api
+add_library                 (node-addon-api INTERFACE)
+add_library                 (cmake-js::node-addon-api ALIAS node-addon-api)
+target_include_directories  (node-addon-api INTERFACE "${NODE_ADDON_API_DIR}")
+target_sources              (node-addon-api INTERFACE "${NODE_ADDON_API_INC_FILES}")
+
+# cmake-js::cmake-js
+add_library                 (cmake-js INTERFACE)
+add_library                 (cmake-js::cmake-js ALIAS cmake-js)
+target_include_directories  (cmake-js INTERFACE "${CMAKE_JS_INC}")
+target_sources              (cmake-js INTERFACE "${CMAKE_JS_SRC}")
+target_sources              (cmake-js INTERFACE "${CMAKE_JS_INC_FILES}")
+target_link_libraries       (cmake-js INTERFACE "${CMAKE_JS_LIB}")
+target_link_libraries       (cmake-js INTERFACE cmake-js::node-api)
+target_link_libraries       (cmake-js INTERFACE cmake-js::node-addon-api)
+target_compile_definitions  (cmake-js INTERFACE "BUILDING_NODE_EXTENSION")
+target_compile_features     (cmake-js INTERFACE cxx_nullptr) # Signal a basic C++11 feature to require C++11.
+
+# Generate definitions
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "Select the MSVC runtime library for use by compilers targeting the MSVC ABI." FORCE)
     if(CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
@@ -352,7 +371,7 @@ function(cmakejs_create_napi_addon name)
     add_library(${name} SHARED)
     add_library(${name_alt}::${name} ALIAS ${name})
 
-    target_link_libraries(${name} PRIVATE cmake-js::addon-base)
+    target_link_libraries(${name} PRIVATE cmake-js::cmake-js)
 
     set_property(
       TARGET ${name}
@@ -513,3 +532,47 @@ function(cmakejs_napi_addon_add_definitions name)
     endforeach()
 
 endfunction()
+
+set (CMAKEJS_TARGETS)
+list (APPEND CMAKEJS_TARGETS
+  node-api
+  node-addon-api
+  cmake-js
+)
+export (
+  TARGETS ${CMAKEJS_TARGETS}
+  FILE share/cmake/CMakeJSTargets.cmake
+  NAMESPACE cmake-js::
+)
+
+
+include (CMakePackageConfigHelpers)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeJSConfig.cmake.in" [==[
+@PACKAGE_INIT@
+
+include(${CMAKE_CURRENT_LIST_DIR}/CMakeJSTargets.cmake)
+
+check_required_components(cmake-js)
+]==])
+# create cmake config file
+configure_package_config_file (
+    "${CMAKE_CURRENT_BINARY_DIR}/CMakeJSConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/CMakeJSConfig.cmake"
+  INSTALL_DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/cmake/CMakeJS"
+)
+# generate the version file for the cmake config file
+write_basic_package_version_file (
+	share/cmake/CMakeJSConfigVersion.cmake
+	VERSION ${_version}
+	COMPATIBILITY AnyNewerVersion
+)
+
+unset(_version)
+
+# These vars are not very namespace friendly!
+unset (CMAKE_JS_SRC)
+unset (CMAKE_JS_INC)
+unset (CMAKE_JS_LIB)
+unset (CMAKE_JS_VERSION)
+unset (CMAKE_JS_EXECUTABLE)
