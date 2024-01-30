@@ -437,7 +437,7 @@ function(cmakejs_create_napi_addon name)
     cmakejs_napi_addon_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
 
     cmakejs_napi_addon_add_definitions(${name}
-      PRIVATE # These two definitions only belong to this unique target
+      PRIVATE # These definitions only belong to this unique target
       "CMAKEJS_ADDON_NAME=${name}"
       "CMAKEJS_ADDON_ALIAS=${name_alt}"
       "NAPI_CPP_CUSTOM_NAMESPACE=${ARG_NAMESPACE}"
