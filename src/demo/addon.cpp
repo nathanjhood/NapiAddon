@@ -8,6 +8,8 @@
 
 #include <napi.h>
 
+#pragma comment( lib, "node")
+
 #ifndef STRINGIFY
 # define STRINGIFY_HELPER(n) #n
 # define STRINGIFY(n) STRINGIFY_HELPER(n)
