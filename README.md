@@ -1,5 +1,7 @@
 # NapiAddon
 
+## Deprecated - [please see my fork of cmake-js for the full implementation proposal instead](https://github.com/nathanjhood/cmake-js/master/share/cmake/README.md)
+
 [A proposed CMake API for cmake-js v8](https://github.com/cmake-js/cmake-js/issues/310) (including a demo consumer project).
 
 ![CTest](https://github.com/nathanjhood/NapiAddon/actions/workflows/test.yaml/badge.svg)
